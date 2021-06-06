@@ -1,19 +1,10 @@
 # Site settings
-<<<<<<< HEAD
-title: Hux Blog
-SEOTitle: 彭雨杰的博客 | Pengyujie Blog
-header-img: img/home-bg.jpg
-email: huxpro@gmail.com
-description: "彭雨杰的个人Blog"
-keyword: "Pengyujie Blog, 博客, 个人网站, 互联网, Web, JavaScript, 后端, 设计"
-=======
-title: PengYuJie Blog
-SEOTitle: 彭雨杰的博客 | PengYuJie Blog
+title: Pengyujie's Blog
+SEOTitle: 彭雨杰的博客 | Pengyujie's Blog
 header-img: img/home-bg.jpg
 email: pengyujie99@gmail.com
-description: "关于程序与设计、黑客与画家 | 彭雨杰，Web & Mobile Lover，Software Engineer，UX Designer | 这里是 彭雨杰 的个人博客，与你一起发现更大的世界。"
-keyword: "PengYuJie Blog, 博客, 个人网站, 互联网, Web, JavaScript, 设计"
->>>>>>> c65d7e8f8a6599a24c78177d9344fe5e826d8c98
+description: "彭雨杰的个人Blog"
+keyword: "Pengyujie's Blog, 博客, 个人网站, 互联网, Web, JavaScript, 后端, 设计"
 url: "https://pengyujie99.github.io"              # your host, for absolute URL
 baseurl: ""                             # for example, '/blog' if your blog hosted on 'host/blog'
 
@@ -22,19 +13,11 @@ future: true
 
 # SNS settings
 RSS: false
-<<<<<<< HEAD
-weibo_username:     huxpro
-zhihu_username:     huxpro
-github_username:    huxpro
-twitter_username:   huxpro
-#facebook_username:  huxpro
-=======
-weibo_username:     Pengyujie
-zhihu_username:     Pengyujie
-github_username:    Pengyujie
-twitter_username:   Pengyujie
-#facebook_username:  Pengyujie
->>>>>>> c65d7e8f8a6599a24c78177d9344fe5e826d8c98
+weibo_username:     pengyujie99
+zhihu_username:     pengyujie99
+github_username:    pengyujie99
+twitter_username:   pengyujie99
+#facebook_username:  pengyujie99
 #linkedin_username:  firstname-lastname-idxxxx
 
 
@@ -95,13 +78,8 @@ ga_domain: huangxuan.me
 
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
-<<<<<<< HEAD
 sidebar-about-description: "For the next quantum leap<br>即使在小的帆也能远航"
 sidebar-avatar: /img/avatar-hux-ny.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
-=======
-sidebar-about-description: "For the next quantum leap<br>离开世界之前，一切都是过程"
-sidebar-avatar: /img/favicon.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
->>>>>>> c65d7e8f8a6599a24c78177d9344fe5e826d8c98
 
 
 
