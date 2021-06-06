@@ -1,10 +1,15 @@
 > Your time is limited, so don’t waste it living someone else’s life. 
 
+<<<<<<< HEAD
 Hi, I am _@huxpro_ (Huang, Xuan), a [Facebook](https://www.facebook.com/) software engineer and a degreed digital designer. My interests range from programming languages in general (type system, type-based formal verification, compilers, runtime systems, garbage collection) to indurstial software engineering (web/mobile app development, user interface and UX, developer infrastructure and DX). 
 
 In the past, I worked on [Alitrip (Fliggy)](https://www.alitrip.com/) mobile and web apps under the [Alibaba Group](https://en.wikipedia.org/wiki/Alibaba_Group), found and lead front-end infrastructure team at a unicorn startup [Beijing Weiying (WePiao)](https://www.crunchbase.com/organization/beijing-weiying-technology), and helped [Ele.me](https://en.wikipedia.org/wiki/Ele.me) to upgrade their mobile web into [the first influential PWA (progressive web app) in China](https://medium.com/elemefe/upgrading-ele-me-to-progressive-web-app-2a446832e509).
 
 I studied BA, Digital Media Art at [Communication University of China](https://en.wikipedia.org/wiki/Communication_University_of_China) and MS, Computer Science with a focus on programming languages at [Rochester Institute of Technology](https://en.wikipedia.org/wiki/Rochester_Institute_of_Technology).
+=======
+[Blog](https://pengyujie99.github.io/)
+
+>>>>>>> c65d7e8f8a6599a24c78177d9344fe5e826d8c98
 
 ##### [My PL Spectrum (WIP 🚧)](https://huangxuan.me/2020/05/05/pl-chart/)
 

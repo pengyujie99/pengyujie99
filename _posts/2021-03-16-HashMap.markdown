@@ -1,0 +1,57 @@
+---
+layout:     post
+title:      "HashMap"
+subtitle:   "HashMap Put和Get的原理"
+date:       2021-03-16 12:00:00
+author:     "Pengyujie"
+header-img: "img/post-bg-miui6.jpg"
+tags:
+    - HashMap
+    - Java
+---
+>众所周知，HashMap是一个用于存储键值对的集合，
+>HashMap是   数组＋链表+红黑树   结构而在HashMap中使用最多的大概是，Put和Get方法来进行存储和获取。
+>HashMap数组每一个元素的初始值都是Null。
+
+<img src="/img/notes/1.jpg" >
+
+<div>
+
+<br><b>Put方法</b>
+<br>进行put.("apple",0)，需要利用一个哈希函数进行确定插入位置 index = Hash("apple"),然后进行插入。
+
+<br><img src="/img/notes/2.jpg" >
+
+
+<br>但是HashMap长度是有限的，当一个index有多个值时，就会冲突，这时候就需要用到链表了，
+<br>只需要将新插入的数据插入这个index的链表即可（注意这时候的插入时插入了链表的头结点）
+
+<br><img src="/img/notes/3.jpg" >
+
+<br><img src="/img/notes/4.jpg" >
+
+<br>而转换为红黑树的触发条件有二个：
+<br>1.链表的长度达到8个
+<br>2.数组长度达到64个
+
+
+<br><b>Get方法</b>
+<br>根据key进行查找value时，将输入的key进行一次映射查找出index， index=Hash("apple")
+<br>由于查出来的index下的数据，可能是一个链表结构，这时候就需要顺着链表头结点，依次往下查找
+</div>
+
+
+---
+HashMap，LinkedHashMap，和TreeMap有什么区别？
+
+LinkedHashMap保存了记录的插入顺序，在利用lterator遍历时，
+先取到的就是先插入的，遍历要比HashMap慢。
+
+TreeMap实现了SortMap接口，能够把它保存的记录根据键排序
+（默认为按照键值升序排序，也可以指定排序的比较器）
+
+---
+HashTable与HashMap
+前者是线程安全，后者是线程不安全
+后者在并发情况下会造成死循环。
+

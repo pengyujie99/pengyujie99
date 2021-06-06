@@ -82,7 +82,11 @@ layout:     post
 title:      "Hello 2015"
 subtitle:   " \"Hello World, Hello Blog\""
 date:       2015-01-29 12:00:00
+<<<<<<< HEAD
 author:     "Hux"
+=======
+author:     "Pengyujie"
+>>>>>>> c65d7e8f8a6599a24c78177d9344fe5e826d8c98
 header-img: "img/post-bg-2015.jpg"
 catalog: true
 tags:

@@ -1,5 +1,9 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 [Hux Blog](https://huangxuan.me)
+=======
+[PENGYUJIE Blog](https://huangxuan.me)
+>>>>>>> c65d7e8f8a6599a24c78177d9344fe5e826d8c98
 ================================
 
 > I never expected this becomes popular.
@@ -62,6 +66,7 @@ Copyright (c) 2015-present Huxpro
 
 Hux Blog is derived from [Clean Blog Jekyll Theme (MIT License)](https://github.com/BlackrockDigital/startbootstrap-clean-blog-jekyll/)
 Copyright (c) 2013-2016 Blackrock Digital LLC.
+<<<<<<< HEAD
 =======
 # peng-yujie
 
@@ -103,3 +108,5 @@ Gitee 是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN�
 5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
 6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
 >>>>>>> 1f979ae89902aafa3a9c6d22495d3639f9fe7f0f
+=======
+>>>>>>> c65d7e8f8a6599a24c78177d9344fe5e826d8c98

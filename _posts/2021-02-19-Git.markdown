@@ -1,0 +1,176 @@
+---
+layout:     post
+title:      "Git"
+subtitle:   "版本控制工具Git"
+date:       2021-02-19 12:00:00
+author:     "Pengyujie"
+header-img: "img/post-bg-2021.jpg"
+catalog: true
+tags:
+    - Git
+    - Java
+---
+> 版本控制
+>就是在版本迭代，对于新旧版本的的管理（多人开发必须要使用版本控制）
+>本地版本控制
+>集中版本控制   svn
+>分布式版本控制 Git
+
+
+<br><b>以下路径为我自己电脑</b>
+
+
+[跳过废话，直接看技术实现 ](#build) 
+<br><b>Git的配置</b>
+<br>
+<br>简单的命令（必须要会）
+```java
+touch index.html  --新建文件
+rm index.html --删除文件
+mkdir test  --创建文件夹
+rm -r  test  --删除一个文件夹  rm - r src 删除src目录
+rm -rf  /   --这就是传说中的删库跑路 (递归删除/下的所有文件) 切勿使用
+mv index.html test1 --移动文件index.html到 test1文件夹
+reset  --清屏初始化终端
+history --查看命令历史记录
+help --帮助
+#  --#号表示注释
+```
+<br>
+<br>查看Git配置
+<br>git config -l  --查看git配置
+<br>git config --system --list --查看系统配置
+<br>git config --global --list  --全局配置
+<br>
+<br>进行提交的命令
+<br>git add files 添加到暂存区
+<br>git commit 提交到仓库
+<br>git push  提交到远程
+
+
+
+<p id = "build"></p>
+## 使用
+>成功下载安装git之后
+
+<br>第一步：设置用户名邮箱 必须设置在用户配置里
+<br><b>没有这一步 可能因为没有提交者信息 无法提交</b>
+```java
+19337@LAPTOP-6VTNLLB4 MINGW64 ~/Desktop
+$ git config --global user.name "pengyujie"
+19337@LAPTOP-6VTNLLB4 MINGW64 ~/Desktop
+$ git config --global user.email "pengyujie99@163.com"
+19337@LAPTOP-6VTNLLB4 MINGW64 ~/Desktop
+
+C:\Users\19337--用户配置
+[user]
+    name = pengyujie
+    email = pengyujie99@163.com
+```
+<br><b>Git搭建</b>
+<br>新建一个项目 或者 从gitee clone一个项目
+<br>初始化init
+```java
+git init --会生成一个git文件夹
+```
+<br>过程：
+```java
+$ git init
+$ git add .
+$ git commit -m "msg"
+$ git remote add orgin [ssh]https://gitee.com/peng-yujie/peng-yujie.git   --这一步开通ssh秘钥，可以直接使用ssh进行连接
+$ git push -u origin main
+
+$ git remote remove origin --断开连接
+```
+<br>
+<br><b>IDEA集成Git</b>
+<br>创建一个普通的springboot项目
+<br>1.新建项目，绑定Git
+<br>
+<br>将远程的git文件目录拷贝到目录中即可
+<br>
+<br>2.修改文件，上传文件
+<br>
+<br>此时已经集成了Git这时候，许多文件为红色 表示未上传，这时候需要上传 可以点开terminal 输入git操作进行add commit 和 push
+<br>add到暂存区
+<br>commit到仓库
+<br>push到远程仓库
+<br>
+<img src="/img/notes/5.png" >
+
+
+## 扩展
+
+<br><b>理论</b>
+<br>工作区 你平时进行存放项目代码的地方
+<br>暂存区 用于临时存放你的改动，事实上它只是一个文件用来保存即将提交到文件列表的信息
+<br>仓库区（可能是远程仓库） 就是安全存放数据的位置 有你以前提交的所有版本的数据，其中head指向最新放入仓库的版本
+
+<br><b>clone一个项目初始化</b>
+<br>git clone url 例如：
+<br>git clone https://gitee.com/singmoonshell/kuangshen.git
+
+<br>Git的分支
+<br>
+```java
+$ git branch newbranch  --新建分支
+$ git branch        --查看分支
+$ git checkout newbranch--切换到newbranch分支
+$ git branch -d newbranch        --删除分支newbranch
+```
+<br>
+<br>提取拉取 github/gitee上的数据
+<br>
+<br>$ git pull origin main 进行拉取数据分支main的数据  可以当做下面二个的结合
+<br>1、从远程仓库下载新分支与数据：
+<br>git fetch [branch]
+<br>2、合并指定分支到当前分支：
+<br>git merge [branch]
+<br>
+<br>git上传到gitee步骤/github同样（gitee：C:\Users\19337\Desktop\U盘\Git\Gitcode\pengyujie99.github.io     
+<br>github：C:\Users\19337\Documents\GitHub\pengyujie99.github.io）
+<br>
+```java
+$ git init
+$ git add .
+$ git commit -m "msg"
+$ git remote add orgin [ssh]https://gitee.com/peng-yujie/peng-yujie.git   --这一步开通ssh秘钥，可以直接使用ssh进行连接
+$ git push -u origin main
+
+$ git remote remove origin --断开连接
+```
+## 从零开始拉取提交一个项目到gitee
+<br>1.首先拉取
+```
+#拉取远程仓库main分支
+$ git clone -b main https://gitee.com/peng-yujie/peng-yujie.git
+```
+<br>2.初始化
+```
+git init
+```
+<br>3.提交三步曲
+```
+git add .
+git commit -m "message"
+git push origin main
+```
+
+
+<br>提交之前必须要做的
+```
+在git命令行中重新输入命令：
+先输入：$ git config --global user.name “你的名字”
+回车后，
+再输入：$ git config --global user.email “你的邮箱地址”
+完成后再提交就没问题了。
+```
+
+<br>配置ssh公钥
+```
+进入用户下的.ssh文件
+$ ssh-keygen -t rsa
+然后一路回车Enter即可
+```
+
