@@ -133,11 +133,11 @@ http和https使用连接方式不同，默认端口也不一样，http是80，ht
 
 - 三次握手
 
-![image-20210609162958414](C:\Blog\pengyujie99.github.io\img\notes\net\1.png)
+<img src="/img/notes/net/1.png">
 
 - 四次挥手
 
-![image-20210609163008779](C:\Blog\pengyujie99.github.io\img\notes\net\2.png)
+<img src="/img/notes/net/2.png">
 
 ## IO和NIO
 
