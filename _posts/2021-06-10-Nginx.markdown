@@ -50,14 +50,14 @@ Nginx提供的二种负载均衡策略：内置策略和扩展策略。
 
 - 2.将安装包移入Linux并解压
 
-```Linux
+```shell
 tar -zvxf nginx-1.20.1.tar.gz 
 ```
 
 - 3.进入nginx文件，运行 configure文件
 
 ```shell
-yum install pcre-devel zlib zlib-devel openssl openssl-devel#可能会使用到的一些依赖包
+yum install pcre-devel zlib zlib-devel openssl openssl-devel #可能会使用到的一些依赖包
 cd nginx-1.20.1/
 ./configure
 make install
@@ -143,7 +143,9 @@ ps -ef|grep nginx #查看nginx进程
     }
 ```
 
-去请求localhost:80端口，发现代理了百度。
+然后在命令模式，进行nginx -s reload 进行重新加载配置文件。
+
+最后去请求localhost:80端口，发现代理了百度。
 
 <img src="/img/notes/nginx/1.png">
 
