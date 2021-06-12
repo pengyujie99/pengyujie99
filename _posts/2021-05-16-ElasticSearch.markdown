@@ -10,7 +10,8 @@ tags:
     - SpringBoot
 ---
 
->ElasticSearch（es）是一个可以处理大量数据的分布式的搜索分析引擎，它是面向文档，一切都JSON。
+>*Nginx* (engine x) 是一个高性能的[HTTP](https://baike.baidu.com/item/HTTP)和[反向代理](https://baike.baidu.com/item/反向代理/7793488)web服务器，同时也提供了IMAP/POP3/SMTP服务。
+
 
 
 ## 安装使用

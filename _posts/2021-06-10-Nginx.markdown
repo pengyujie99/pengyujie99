@@ -1,0 +1,149 @@
+---
+layout:     post
+title:      "Nginx"
+subtitle:   "Nginx反向代理"
+date:       2021-06-10
+author:     "Pengyujie"
+header-img: "img/tag-bg.jpg"
+tags:
+    - Java
+    - Nginx
+---
+
+>ElasticSearch（es）是一个可以处理大量数据的分布式的搜索分析引擎，它是面向文档，一切都JSON。
+
+
+
+## Nginx的主要用途
+
+### 正向代理和反向代理
+
+Ngin的作用：Http代理，反向代理：作为web服务器最常用的功能之一。
+
+**正向代理**：是指代理客户端这边的，比如客户端需要去访问美国的一个服务器，无法直接访问，需要使用到VPN。（VPN就是一个代理，由VPN去访问你需要访问的服务器，然后VPN接收数据最后传给客户端）  
+
+**反向代理**：是指代理服务端这边的，比如你在不同的地方访问一个域名你访问的服务器是不同的。（例如：你点击访问[百度](www.baidu.com)，都是访问百度，实际访问的服务器可能是不同的，它会通过一个代理，去访问不同的服务器来减轻服务器压力）
+
+
+
+### 负载均衡
+
+Nginx提供的二种负载均衡策略：内置策略和扩展策略。
+
+内置策略：轮询，加权轮询。
+
+扩展策略：自己进行设定。
+
+
+
+### 动静分离
+
+利用nginx，将静态资源（css、html、js等等）做一个缓存，下次不需要重新去请求，直接从nginx返回。
+
+
+
+## Nginx的安装
+
+
+
+- 1.[官网](http://nginx.org/en/download.html)下载Linux安装包
+
+- 2.将安装包移入Linux并解压
+
+```Linux
+tar -zvxf nginx-1.20.1.tar.gz 
+```
+
+- 3.进入nginx文件，运行 configure文件
+
+```shell
+yum install pcre-devel zlib zlib-devel openssl openssl-devel#可能会使用到的一些依赖包
+cd nginx-1.20.1/
+./configure
+make install
+```
+
+- 4.运行nginx
+
+```shell
+whereis nginx #查看路径
+cd /usr/local/nginx#进入路径下的sbin运行nginx
+./nginx
+```
+
+
+
+## Nginx常用命令
+
+```shell
+./nginx -s stop #强制停止nginx
+./nginx -s quit #安全退出nginx
+./nginx -s reload #重新加载配置文件
+ps -ef|grep nginx #查看nginx进程
+```
+
+
+
+## Nginx测试
+
+在conf的nginx.conf中进行配置（在原来基础上只添加了**负载均衡**和**反向代理**）
+
+```config
+    #负载均衡
+	upstream pengyujie{
+		server 127.0.0.1:8080 weight=1;
+		server 127.0.0.1:8081 weight=1;
+	}
+	server {
+        listen       80;
+        server_name  localhost;
+
+        #charset koi8-r;
+
+        #access_log  logs/host.access.log  main;
+
+        location / {
+            root   html;
+            index  index.html index.htm;
+			#反向代理
+			proxy_pass http://www.baidu.com/;
+        }
+
+        #error_page  404              /404.html;
+
+        # redirect server error pages to the static page /50x.html
+        #
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   html;
+        }
+
+        # proxy the PHP scripts to Apache listening on 127.0.0.1:80
+        #
+        #location ~ \.php$ {
+        #    proxy_pass   http://127.0.0.1;
+        #}
+
+        # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+        #
+        #location ~ \.php$ {
+        #    root           html;
+        #    fastcgi_pass   127.0.0.1:9000;
+        #    fastcgi_index  index.php;
+        #    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
+        #    include        fastcgi_params;
+        #}
+
+        # deny access to .htaccess files, if Apache's document root
+        # concurs with nginx's one
+        #
+        #location ~ /\.ht {
+        #    deny  all;
+        #}
+    }
+```
+
+去请求localhost:80端口，发现代理了百度。
+
+<img src="/img/notes/nginx/1.png">
+
