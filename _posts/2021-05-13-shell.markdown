@@ -41,6 +41,7 @@ fi
 ```
 
 <br><b>case语句</b>
+
 ```shell
 case $1 in
 "peng")
@@ -56,7 +57,8 @@ esac
 ```
 
 <br><b>for循环</b>
-<br>第一种使用：
+第一种使用：
+
 ```shell
 s=0
 for(( i=0;i<=100;i++ ))
@@ -65,17 +67,21 @@ do
 done
 
 echo $s
-```shell
-<br>第二种使用：
 ```
+第二种使用：
+
+```shell
 for i in $*
 do
         echo "pengyujie 是 $i"
 done
 ```
 
-<br>$*和$@的区别  两者都是可以显示所有参数，前者一次显示所有，后者是分别显示。
-```shell
+
+
+$*和$@的区别  两者都是可以显示所有参数，前者一次显示所有，后者是分别显示。
+
+```
 for i in "$*"
 do
         echo "pengyujie 是 $i"
@@ -197,7 +203,7 @@ sum $p1 $p2
 <br>1.使用linux命令 查看file1中空行所在的行号  
 ```shell
 awk '/^$/{print nr }' test01.txt    
-```  
+```
 ^$表示空行
 
 <br>2.计算第二列的和并输出
@@ -225,5 +231,4 @@ sort -n test04.txt | awk '{print $1; sum+=$1} END {print "sum="sum}'
 ```shell
 grep -r "peng" /home/pengyujie/shells |cut -d : -f 1
 ```
-
 
