@@ -1,0 +1,197 @@
+---
+layout:     post
+title:      "Note"
+subtitle:   "笔记"
+date:       2021-06-10
+author:     "Pengyujie"
+header-img: "img/tag-bg.jpg"
+hidden: true
+tags:
+  - Java
+  - Note
+
+---
+
+> 面试的部分笔记
+
+
+
+- math.round的用法？
+
+四舍六入五看前面一位单双（单就进，双就舍）
+
+源码就是加上0.5之后向下取整。
+
+
+
+- IO与NIO
+
+IO是面向流的，NIO是面向块，也可以说是面向缓存的。
+
+IO是阻塞的，比如当你在进行一个读写时，必须要等他做完，才可以做其他事情。NIO是不需要等它读写完毕就可以做其他事情，不会阻塞。
+
+IO是没有选择器的，一个请求就对应一个线程。NIO可以使用选择器，用一个线程来管理多个通道。
+
+
+
+- 如何将字符串进行反转
+
+```java
+public class Reverse {
+    public static void main(String[] args) {
+        String str = "pengyujie";
+        StringBuffer sb = new StringBuffer();
+        sb.append(str);
+        System.out.println(sb.reverse());
+    }
+}
+```
+
+
+
+- Java线程的状态
+
+创建 等待 超时等待 运行 阻塞 销毁
+
+
+
+- 进程的状态
+
+创建 就绪 运行 阻塞 销毁
+
+
+
+- 创建对象的几种方式
+
+1、直接new对象 。 2、利用反射获取class，调用newInstance()方法创建对象。  3、可以调用Constructor类的nnewInstance()方法来创建。4、反序列。
+
+
+
+- spring ioc的几种注入方式
+
+1、setter注入。 2、接口注入。 3、构造器注入。
+
+
+
+- mybatis的隔离级别
+
+ 读未提交 不可重复读 可重复读 串行化  默认的级别是可重复读。
+
+
+
+- spring mvc的五大组件
+
+DispatchServlet  HandlerMaping  Controller ViewResolve ModelAndView
+
+
+
+- Java有哪些容器
+
+主要分为二大类：Collection和Map。
+
+list和set实现了Collection接口，hashmap实现的是Map接口。
+
+
+
+- 什么是泛型，有什么优点
+
+泛型就是参数化数据类型，将数据类型指定为一个参数。
+
+好处：类型安全、避免了强制类型转换、性能也更好一点。
+
+
+
+- get和post
+
+get请求会将请求参数放在url中，url的长度也是有限的。post是以请求体的形式去传递参数。
+
+退回页面时，get直接退回，post需要重新提交请求。
+
+
+
+- 类加载的过程
+
+加载：将.calss文件加载到jvm。
+
+链接：1、验证：验证字节流是否符合规范。 2、准备：分配内存空间，并赋初始值。3、解析：将符号引用变为直接引用、引用指向内存地址。
+
+初始化：开始执行代码逻辑。
+
+
+
+- pc计数器的作用
+
+保证程序的顺利执行，它记录的是下一条执行的指令。
+
+
+
+- list的循环输出方式
+
+```java
+public class Iterator {
+    public static void main(String[] args) {
+        List<Integer> list = new ArrayList<>();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(4);
+
+        //for循环
+        for (int i = 0; i < list.size(); i++) {
+            System.out.println(list.get(i));
+        }
+        System.out.println("------------------");
+
+        //增强for循环
+        for (Integer integer : list) {
+            System.out.println(integer);
+        }
+        System.out.println("------------------");
+
+        //迭代器
+        java.util.Iterator<Integer> iterator = list.iterator();
+        while(iterator.hasNext()){
+            System.out.println(iterator.next());
+        }
+    }
+}
+```
+
+
+
+- SQL语句 DML语句
+
+```sql
+--DML语句
+--表操作
+CREATE TABLE B--创建表
+(ID INT,
+NAME VARCHAR(20));
+
+DELETE B--删除表内容
+ALTER TABLE B ADD email Varchar(20);--表添加一个字段
+
+DELETE FROM B--删除表内容
+DELETE B--删除表内容
+TRUNCATE TABLE B --删除表内容 保留结构，与上面的区别是无法rollback 和hwm标记复位
+
+ALTER TABLE B ADD email Varchar(20);--表添加一个字段
+DROP TABLE B; --删除表
+ALTER TABLE B DROP COLUMN email;--表删除一个字段
+--数据操作
+INSERT INTO B VALUES(1,'zhangsan');--添加一行数据
+INSERT INTO B VALUES(2,'lisi');
+INSERT INTO B VALUES(3,'pengyujie',1933799087)
+DELETE --删除一行数据
+FROM B
+WHERE B.Id=1
+UPDATE B SET email='1933799087@qq.com'--修改数据
+WHERE B.ID=3
+SELECT * FROM B ;--查询
+--用户
+GRANT USER user_name IDENTIFIED BY user_password--创建用户
+GRANT CREATE TABLE TO user_name--授权给用户
+-----
+```
+
+
