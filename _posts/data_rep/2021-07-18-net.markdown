@@ -1,0 +1,646 @@
+---
+layout:     post
+title:      "网络编程"
+subtitle:   "对回顾网络编程"
+date:       2021-07-18 12:00:00
+author:     "Pengyujie"
+header-img: "img/post-bg-rwd.jpg"
+tags:
+    - Java
+    - net
+
+---
+
+>对网络编程的回顾。
+
+
+
+## 回顾
+
+### 网络编程
+
+> 网络编程的本质就是实现不同地理位置，多台计算机之间的资源共享和信息传递
+
+
+
+> 利用socket 进行通信，socket.getOutputStream()、socket.getInputStream()
+
+
+
+#### TCP实现简单的聊天
+
+先运行服务端，在运行客户端
+
+服务端
+
+~~~java
+package com.example.demo.kuangstudy.tcp;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class TcpServerDemo01 {
+    public static void main(String[] args) {
+        ServerSocket serverSocket =null;
+        Socket socket=null;
+        InputStream is =null;
+        ByteArrayOutputStream baos =null;
+
+
+        while(true){
+            try {
+                //1 创建一个服务器地址
+                serverSocket = new ServerSocket(8888);
+                //2 等待客户端连接过来
+                socket = serverSocket.accept();
+                //3 读取客户端传过来的消息
+                is = socket.getInputStream();
+                //管道流
+                baos =new ByteArrayOutputStream();
+
+                byte[] buffer =new byte[1024];
+                int len;
+                while((len=is.read(buffer))!=-1){
+                    baos.write(buffer,0,len);
+                }
+                System.out.println(baos.toString());
+            }catch (IOException e){
+                e.printStackTrace();
+            }finally {
+                if(baos!=null){
+                    try {
+                        baos.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if(is!=null){
+                    try {
+                        is.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if(socket!=null){
+                    try {
+                        socket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if(serverSocket!=null){
+                    try {
+                        serverSocket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+        }
+    }
+}
+~~~
+
+
+
+客户端
+
+~~~java
+package com.example.demo.kuangstudy.tcp;
+
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.util.Scanner;
+
+
+public class TcpClientDemo01 {
+    public static void main(String[] args) {
+
+        Socket socket = null;
+        OutputStream os = null;
+        try{
+            //1 首先要知道连接地址和端口
+            InetAddress ServerIP = InetAddress.getByName("127.0.0.1");
+            int port = 8888;
+            //2 创建一个socket连接
+            socket =new Socket(ServerIP,port);
+            //3 发送消息 IO流
+            Scanner sc =new Scanner(System.in);//输入你想说的话 会在服务端显示
+            String str = sc.nextLine();
+
+            os = socket.getOutputStream();
+            os.write(str.getBytes());//把你说的话换为byte，进行写入os中
+        }catch (IOException e){
+            e.printStackTrace();
+        }finally {
+            if(os!=null){
+                try {
+                    os.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(socket!=null){
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
+}
+~~~
+
+
+
+
+
+#### TCP实现文件上传
+
+
+
+客户端上传文件
+
+~~~java
+package com.example.demo.kuangstudy.tcp;
+
+import java.io.*;
+import java.net.InetAddress;
+import java.net.Socket;
+
+public class WangYiYun {
+    public static void main(String[] args) throws Exception {
+        //地址
+        InetAddress IP = InetAddress.getByName("127.0.0.1");
+        //创建一个socket连接
+        Socket socket =new Socket(IP,9000);
+        //创建一个输出流
+        OutputStream os = socket.getOutputStream();
+        //文件流
+        FileInputStream fis = new FileInputStream(new File("WangYiYun.jpg"));
+
+        //写出文件
+        byte[] buffer =new byte[1024];
+        int len;
+        while((len=fis.read(buffer))!=-1){
+            os.write(buffer,0,len);
+        }
+        //通知服务器，传输完毕可以接收了
+        socket.shutdownOutput();//已经传输完毕
+
+        //接收服务器传来的消息，确认接收完毕之后断开
+        InputStream inputStream = socket.getInputStream();
+        byte[] buffer1 =new byte[1024];
+        int len1;
+        ByteArrayOutputStream baos =new ByteArrayOutputStream();
+        while((len1=inputStream.read(buffer))!=-1){
+            baos.write(buffer1,0,len1);
+            System.out.println(baos);
+        }
+
+        //关闭资源
+        fis.close();
+        os.close();
+        socket.close();
+    }
+}
+~~~
+
+
+
+
+
+服务端接收文件
+
+~~~java
+package com.example.demo.kuangstudy.tcp;
+
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class WangYiYunServer {
+    public static void main(String[] args) throws Exception {
+        //创建服务端
+        ServerSocket serverSocket = new ServerSocket(9000);
+        //监听客户端的连接 如果没有接收到socket连接会一直阻塞 直到接收到连接
+        Socket socket = serverSocket.accept();
+
+        //获取输入流
+        InputStream is = socket.getInputStream();
+        //文件输出
+        FileOutputStream fos = new FileOutputStream(new File("tcpDown.jpg"));
+
+        byte[] buffer =new byte[1024];
+        int len;
+        while((len=is.read(buffer))!=-1){
+            fos.write(buffer,0,len);
+        }
+
+        //通知客户端我接收完毕
+        OutputStream outputStream = socket.getOutputStream();
+        outputStream.write("接收完毕！可以关闭了".getBytes());
+
+        //关闭资源
+        fos.close();
+        is.close();
+        socket.close();
+        serverSocket.close();
+    }
+}
+~~~
+
+
+
+#### UDP实现消息发送
+
+
+
+服务端
+
+~~~java
+package com.example.demo.kuangstudy.udp;
+
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+
+public class UdpServerDemo01 {
+    public static void main(String[] args) throws Exception {
+        //1 开放端口，保证可以传输过来
+        DatagramSocket socket = new DatagramSocket(9090);
+
+        //接收数据包
+        byte[] buffer = new byte[1024];
+        DatagramPacket packet = new DatagramPacket(buffer,0,buffer.length);//数据 数据长度的开始 数据长度的结束
+
+        socket.receive(packet);
+
+
+        System.out.println(new String(packet.getData(),0,packet.getData().length));//byte转为String  数据 数据长度的开始 数据长度的结束
+        System.out.println("收到的信息来自于："+packet.getSocketAddress());//信息来源计算机的IP和端口号
+
+        //关闭
+        socket.close();
+
+    }
+}
+~~~
+
+
+
+客户端
+
+~~~java
+package com.example.demo.kuangstudy.udp;
+
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.util.Scanner;
+
+public class UdpClientDemo01 {//udp无连接实现消息发送
+    public static void main(String[] args) throws Exception {
+        //发送地址
+        InetAddress IP = InetAddress.getByName("127.0.0.1");
+        int port = 9090;
+        //1 建立一个socket
+        DatagramSocket socket = new DatagramSocket();
+
+        //2 建个包
+        Scanner sc =new Scanner(System.in);
+        String str =sc.nextLine();
+
+        //数据 数据长度的开始 数据长度的结束 IP地址 端口号
+        DatagramPacket packet = new DatagramPacket(str.getBytes(), 0, str.getBytes().length, IP, port);
+
+        //3 发送包
+        socket.send(packet);
+
+        //4 关闭socket
+        socket.close();
+
+    }
+}
+~~~
+
+
+
+#### UDP实现简单的聊天
+
+这里只使用了一个发送端（客户端） 和接收端（客户端）。要实现多人可以利用线程实现。
+
+客户端
+
+~~~java
+package com.example.demo.kuangstudy.udp.chat;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetSocketAddress;
+
+public class UdpSend01 {
+    public static void main(String[] args) throws Exception {
+        //开放端口 让数据可以传过来
+        DatagramSocket socket = new DatagramSocket(8888);
+
+        //准备数据
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        while(true){
+            String data =reader.readLine();
+            byte[] datas = data.getBytes();
+
+            DatagramPacket packet = new DatagramPacket(datas,0,datas.length,new InetSocketAddress("localhost",8889));
+
+            socket.send(packet);
+            if("bye".equals(data)){
+                break;
+            }
+        }
+        reader.close();
+        socket.close();
+    }
+}
+~~~
+
+
+
+服务端
+
+~~~java
+package com.example.demo.kuangstudy.udp.chat;
+
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+
+public class UdpReceive01 {
+    public static void main(String[] args) throws Exception {
+        //开放端口 让数据可以传过来
+        DatagramSocket socket = new DatagramSocket(8889);
+        System.out.println("=======聊天室========");
+
+        while(true){
+            //准备接收数据包
+            byte[] buffer = new byte[1024];
+            DatagramPacket packet = new DatagramPacket(buffer,0,buffer.length);
+
+            //阻塞接收
+            socket.receive(packet);
+
+            //读取数据
+            String rec_str = new String(packet.getData(), 0, packet.getData().length);
+            //接收数据为bye时断开连接 不能直接使用"bye".equals(rec_str)  rec_str长度与bye不一致 因为byte数组默认为1024
+            if("bye".equals(rec_str.trim())){//trim() 方法用于删除字符串的头尾空白符
+                System.out.println(packet.getAddress()+":");
+                System.out.println(rec_str);
+                break;
+            }else{
+                System.out.println(packet.getAddress()+":");
+                System.out.println(rec_str);
+            }
+        }
+        socket.close();
+        System.out.println("聊天室已关闭");
+    }
+}
+~~~
+
+
+
+#### UDP实现聊天
+
+
+
+接收端线程
+
+~~~java
+package com.example.demo.kuangstudy.udp.chat01;
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.SocketException;
+
+public class UdpReceive implements Runnable{//接收端线程
+    DatagramSocket socket =null;
+
+    private int fromPort;//本线程端口
+
+    public UdpReceive(int fromPort) {
+        this.fromPort = fromPort;
+
+        try {
+            System.out.println("=======聊天室========");
+            socket =new DatagramSocket(fromPort);
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void run() {
+        while(true){
+            //准备接收数据包
+            byte[] buffer = new byte[1024];
+            DatagramPacket packet = new DatagramPacket(buffer,0,buffer.length);
+
+            //阻塞接收
+            try {
+                socket.receive(packet);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            //读取数据
+            String rec_str = new String(packet.getData(), 0, packet.getData().length);
+            //接收数据为bye时断开连接 不能直接使用"bye".equals(rec_str)  rec_str长度与bye不一致 因为byte数组默认为1024
+            if("bye".equals(rec_str.trim())){//trim() 方法用于删除字符串的头尾空白符
+                System.out.println(packet.getSocketAddress()+":");
+                System.out.println(rec_str);
+                break;
+            }else{
+                System.out.println(packet.getSocketAddress()+":");
+                System.out.println(rec_str);
+            }
+        }
+        socket.close();
+        System.out.println("聊天室已关闭");
+
+    }
+}
+~~~
+
+
+
+发送端线程
+
+~~~~java
+package com.example.demo.kuangstudy.udp.chat01;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetSocketAddress;
+import java.net.SocketException;
+
+public class UdpSend implements Runnable{//发送端线程
+    DatagramSocket socket =null;
+    BufferedReader reader = null;
+
+    private String IP;//发送给对方 对方的IP地址
+    private int port;//发送给对方 对方的port端口号
+    private int fromPort;//本线程端口
+
+    public UdpSend(String IP, int port, int fromPort) {
+        this.IP = IP;
+        this.port = port;
+        this.fromPort = fromPort;
+
+        //开放端口 让数据可以传过来
+        try {
+            socket = new DatagramSocket(fromPort);//开放端口 可以接收数据 传出数据时会存入packet里
+            reader = new BufferedReader(new InputStreamReader(System.in));//准备数据
+
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void run() {
+        try {
+            while(true){
+                String data =reader.readLine();
+                byte[] datas = data.getBytes();
+
+                DatagramPacket packet = new DatagramPacket(datas,0,datas.length,new InetSocketAddress(IP,port));
+
+                socket.send(packet);
+                if("bye".equals(data)){
+                    break;
+                }
+            }
+            reader.close();
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+~~~~
+
+
+
+要聊天开启二个线程就可以进行聊天了
+
+聊天学生1     
+
+~~~java
+package com.example.demo.kuangstudy.udp.chat01;
+
+public class Student01 {//每个学生都开启 发送和接收线程 就都可以进行接收和发送消息了
+    public static void main(String[] args) {
+        new Thread(new UdpSend("localhost",9999,5555)).start();//该学生的发送端口5555 发给对方的对方9999端口
+        new Thread(new UdpReceive(8888)).start();//该学生的接收端口
+    }
+}
+~~~
+
+
+
+聊天学生2
+
+~~~java
+package com.example.demo.kuangstudy.udp.chat01;
+
+public class Student02 {
+    public static void main(String[] args) {
+        new Thread(new UdpSend("localhost",8888,6666)).start();//该学生的发送端口6666 发给对方的对方8888端口
+        new Thread(new UdpReceive(9999)).start();//该学生的接收端口
+    }
+}
+~~~
+
+
+
+
+
+
+
+#### URL下载网络资源
+
+网络上一切都是流
+
+~~~java
+package com.example.demo.kuangstudy;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+
+public class WangYiYun {
+    public static void main(String[] args) throws IOException {
+        //下载地址
+        URL url =new URL("https://images2017.cnblogs.com/blog/1222878/201711/1222878-20171111160819825-27801316.png");//url地址
+        System.out.println(url.getProtocol());//协议
+        System.out.println(url.getHost());//主机IP
+        System.out.println(url.getPort());//端口
+        System.out.println(url.getFile());//文件
+        System.out.println(url.getPath());//全路径
+        System.out.println(url.getQuery());//参数
+        //连接到这个资源
+        URLConnection urlConnection = url.openConnection();
+        InputStream inputStream = urlConnection.getInputStream();
+        FileOutputStream fos =new FileOutputStream("WangYiYun.jpg");
+        byte[] buffer= new byte[1024];
+        int len;
+        while((len=inputStream.read(buffer))!=-1){
+            fos.write(buffer,0,len);//写出这个数据
+        }
+        fos.close();
+        inputStream.close();
+        System.out.println("success");
+    }
+}
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

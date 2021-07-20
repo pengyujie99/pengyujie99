@@ -135,7 +135,7 @@ $ git branch -d newbranch        --删除分支newbranch
 $ git init
 $ git add .
 $ git commit -m "msg"
-$ git remote add orgin [ssh]https://gitee.com/peng-yujie/peng-yujie.git   --这一步开通ssh秘钥，可以直接使用ssh进行连接
+$ git remote add origin [ssh]https://gitee.com/peng-yujie/peng-yujie.git   --这一步开通ssh秘钥，可以直接使用ssh进行连接
 $ git push -u origin main
 
 $ git remote remove origin --断开连接
@@ -169,8 +169,8 @@ git push origin main
 
 <br>配置ssh公钥
 ```
-进入用户下的.ssh文件
-$ ssh-keygen -t rsa
+删除.ssh文件夹（直接搜索该文件夹）下的known_hosts(手动删除即可，不需要git）
+$ ssh-keygen -t rsa -C "your@email.com"（请填你设置的邮箱地址）
 然后一路回车Enter即可
 ```
 
