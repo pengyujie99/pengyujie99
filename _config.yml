@@ -13,11 +13,11 @@ future: true
 
 # SNS settings
 RSS: false
-weibo_username:     pengyujie
-zhihu_username:     pengyujie
-github_username:    pengyujie
-twitter_username:   pengyujie
-#facebook_username:  pengyujie
+weibo_username:     Au
+zhihu_username:     Au
+github_username:    Au
+twitter_username:   Au
+#facebook_username:  Au
 #linkedin_username:  firstname-lastname-idxxxx
 
 
@@ -59,7 +59,7 @@ kramdown:
 
 
 # Disqus settings
-disqus_username: hux
+disqus_username: pengyujie
 
 # Netease settings
 netease_comment: false
@@ -72,7 +72,7 @@ netease_comment: false
 
 # Google Analytics
 ga_track_id: 'UA-49627206-1'            # Format: UA-xxxxxx-xx
-ga_domain: huangxuan.me
+ga_domain: pengyujie
 
 
 
