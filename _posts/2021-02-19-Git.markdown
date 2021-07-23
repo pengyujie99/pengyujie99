@@ -19,11 +19,11 @@ tags:
 
 <br><b>以下路径为我自己电脑</b>
 
-
 [跳过废话，直接看技术实现 ](#build) 
 <br><b>Git的配置</b>
 <br>
-<br>简单的命令（必须要会）
+简单的命令（必须要会）
+
 ```java
 touch index.html  --新建文件
 rm index.html --删除文件
@@ -36,7 +36,7 @@ history --查看命令历史记录
 help --帮助
 #  --#号表示注释
 ```
-<br>
+
 <br>查看Git配置
 <br>git config -l  --查看git配置
 <br>git config --system --list --查看系统配置
@@ -62,14 +62,38 @@ $ git config --global user.name "pengyujie"
 $ git config --global user.email "pengyujie99@163.com"
 19337@LAPTOP-6VTNLLB4 MINGW64 ~/Desktop
 
+--这时候用户配置下面的配置如下
 C:\Users\19337--用户配置
 [user]
     name = pengyujie
     email = pengyujie99@163.com
 ```
-<br><b>Git搭建</b>
-<br>新建一个项目 或者 从gitee clone一个项目
+
+
+配置ssh公钥
+
+```
+删除.ssh文件夹（直接搜索该文件夹）下的known_hosts(手动删除即可，不需要git）
+$ ssh-keygen -t rsa -C "your@email.com"（请填你设置的邮箱地址）
+然后一路回车Enter即可
+
+然后系统会自动在.ssh文件夹下生成两个文件，id_rsa和id_rsa.pub，用记事本打开id_rsa.pub，将全部的内容复制
+
+打开https://github.com/，登陆你的账户，进入设置-进入ssh设置
+在key中将刚刚复制的粘贴进去，点击add ssh key，
+
+ok！
+```
+
+
+
+
+
+<b>Git搭建</b>
+
+新建一个项目 或者 从gitee clone一个项目
 <br>初始化init
+
 ```java
 git init --会生成一个git文件夹
 ```
@@ -77,8 +101,9 @@ git init --会生成一个git文件夹
 ```java
 $ git init
 $ git add .
+$ git status
 $ git commit -m "msg"
-$ git remote add orgin [ssh]https://gitee.com/peng-yujie/peng-yujie.git   --这一步开通ssh秘钥，可以直接使用ssh进行连接
+$ git remote add origin [ssh]https://gitee.com/peng-yujie/peng-yujie.git   --这一步开通ssh秘钥，可以直接使用ssh进行连接
 $ git push -u origin main
 
 $ git remote remove origin --断开连接
@@ -109,21 +134,27 @@ $ git remote remove origin --断开连接
 
 <br><b>clone一个项目初始化</b>
 <br>git clone url 例如：
-<br>git clone https://gitee.com/singmoonshell/kuangshen.git
 
-<br>Git的分支
-<br>
-```java
+~~~git
+$ git clone https://gitee.com/singmoonshell/kuangshen.git
+~~~
+
+Git的分支
+
+
+```git
 $ git branch newbranch  --新建分支
 $ git branch        --查看分支
 $ git checkout newbranch--切换到newbranch分支
 $ git branch -d newbranch        --删除分支newbranch
 ```
-<br>
-<br>提取拉取 github/gitee上的数据
-<br>
-<br>$ git pull origin main 进行拉取数据分支main的数据  可以当做下面二个的结合
-<br>1、从远程仓库下载新分支与数据：
+提取拉取 github/gitee上的数据
+
+~~~git
+$ git pull origin main #进行拉取数据分支main的数据  可以当做下面二个的结合
+~~~
+
+1、从远程仓库下载新分支与数据：
 <br>git fetch [branch]
 <br>2、合并指定分支到当前分支：
 <br>git merge [branch]
@@ -131,6 +162,7 @@ $ git branch -d newbranch        --删除分支newbranch
 <br>git上传到gitee步骤/github同样（gitee：C:\Users\19337\Desktop\U盘\Git\Gitcode\pengyujie99.github.io     
 <br>github：C:\Users\19337\Documents\GitHub\pengyujie99.github.io）
 <br>
+
 ```java
 $ git init
 $ git add .
@@ -158,7 +190,9 @@ git push origin main
 ```
 
 
-<br>提交之前必须要做的
+
+第一次提交之前必须要做的配置User和配置ssh公钥
+
 ```
 在git命令行中重新输入命令：
 先输入：$ git config --global user.name “你的名字”
@@ -167,10 +201,7 @@ git push origin main
 完成后再提交就没问题了。
 ```
 
-<br>配置ssh公钥
-```
-删除.ssh文件夹（直接搜索该文件夹）下的known_hosts(手动删除即可，不需要git）
-$ ssh-keygen -t rsa -C "your@email.com"（请填你设置的邮箱地址）
-然后一路回车Enter即可
-```
+
+
+
 
