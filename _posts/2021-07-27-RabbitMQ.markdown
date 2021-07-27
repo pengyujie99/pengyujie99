@@ -22,21 +22,21 @@ tags:
 
 流程：就是发送方 将消息发送到交换机，交换机通过对应的Routing Key，将数据发送到对应的Queue，然后由Consumer来进行取消息。
 
-1. Publisher：即数据的发送方
+​	1. Publisher：即数据的发送方
 
 一般一个Message有两个部分：payload（有效载荷）和label（标签），payload顾名思义就是传输的数据，label是exchange的名字或者说是一个tag，它描述了payload，而且RabbitMQ也是通过这个label来决定把这个Message发给哪个Consumer
 
-2. Exchange : 消息交换机
+​	2. Exchange : 消息交换机
 
 exchange从生产者那收到消息后，一般会指定一个Routing Key，来指定这个消息的路由规则。Message消息，消息是不具名的，它由消息头和消息体组成。消息体是不透明的，而消息头则由一系列的可选属性组成，这些属性包括routing-key（路由键）、priority（相对于其他消息的优先权）、delivery-mode（指出该消息可能需要持久性存储）等。
 
-3. binding：即绑定
+​	3. binding：即绑定
 
 在绑定（Binding）Exchange与Queue的同时，一般会指定一个Binding key;
 
 但Binding key并不是在所有情况下都生效，它依赖于Exchange Type
 
-4. Queue：即队列
+​	4. Queue：即队列
 
 是rabbitmq内部对象，用于存储消息；
 
@@ -47,7 +47,7 @@ exchange从生产者那收到消息后，一般会指定一个Routing Key，来�
 > 如果queue不存在，当然Consumer不会得到任何的Message。那么Producer Publish的Message会被丢弃。所以，还是为了数据不丢失，Consumer和Producer都try to create the queue！反正不管怎么样，这个接口都不会出问题。
 > queue对load balance的处理是完美的。对于多个Consumer来说，RabbitMQ 使用循环的方式（round-robin）的方式均衡的发送给不同的Consumer。
 
-5. Connection与Channel：两者都是RabbitMQ对外提供的API中最基本的对象
+​	5. Connection与Channel：两者都是RabbitMQ对外提供的API中最基本的对象
 
 **Connection**就是一个TCP的连接，Publisher和Consumer都是通过TCP连接到RabbitMQ Server的
 
@@ -55,15 +55,15 @@ exchange从生产者那收到消息后，一般会指定一个Routing Key，来�
 
 Channel是我们与RabbitMQ打交道的最重要的一个接口，我们大部分的业务操作是在Channel这个接口中完成的，包括定义Queue、定义Exchange、绑定Queue与Exchange、发布消息等
 
-6. Consumer：即数据的接收方
+​	6. Consumer：即数据的接收方
 
 如果有多个消费者同时订阅同一个Queue中的消息，Queue中的消息会被平摊给多个消费者
 
-7. Broker: 即RabbitMQ Server
+​	7. Broker: 即RabbitMQ Server
 
 其作用是维护一条从Publisher到Consumer的路线，保证数据能够按照指定的方式进行传输
 
-8. Virtual host：即虚拟主机
+​	8. Virtual host：即虚拟主机
 
 当多个不同的用户使用同一个RabbitMQ server提供的服务时，可以划分出多个vhost，每个用户在自己的vhost创建exchange／queue
 
@@ -312,7 +312,7 @@ Topic Exchange 主题交换机
 
 RabbitMQ 支持多种语言访问，以 Java 为例看下一般使用 RabbitMQ 的步骤。
 
-1. maven工程的pom文件中添加依赖
+​	1. maven工程的pom文件中添加依赖
 
 
 
@@ -324,7 +324,7 @@ RabbitMQ 支持多种语言访问，以 Java 为例看下一般使用 RabbitMQ �
 </dependency>
 ```
 
-1. 消息生产者
+​	2. 消息生产者
 
 
 
@@ -363,7 +363,7 @@ public class Producer {
 }
 ```
 
-1. 消息消费者
+​	3. 消息消费者
 
 
 
@@ -420,7 +420,7 @@ public class Consumer {
 }
 ```
 
-1. 启动 RabbitMQ 服务器
+​	4. 启动 RabbitMQ 服务器
 
 
 
