@@ -5,6 +5,7 @@ subtitle:   "对回顾网络编程"
 date:       2021-07-18 12:00:00
 author:     "Pengyujie"
 header-img: "img/post-bg-rwd.jpg"
+hidden: true
 tags:
     - Java
     - net
@@ -617,6 +618,515 @@ public class WangYiYun {
     }
 }
 ~~~
+
+
+
+
+
+### JUC
+
+#### CAS compare and swap
+
+~~~java
+public class CAS {
+    public static void main(String[] args) {
+        AtomicInteger atomicInteger = new AtomicInteger(100);// 设置原来值var1
+
+        System.out.println(atomicInteger.compareAndSet(100, 20));//设置期望值 和 替换值
+        System.out.println(atomicInteger.get());
+
+        System.out.println(atomicInteger.getAndIncrement());
+    }
+}
+~~~
+
+
+
+Unsafe类去调用底层c++方法去操作内存
+
+
+
+![image-20210722095206123](C:\Users\pengyujie\AppData\Roaming\Typora\typora-user-images\image-20210722095206123.png)
+
+
+
+如果出现ABA问题，可以通过版本号或者时间戳解决。
+
+~~~java
+package com.example.demo.kuangstudy;
+
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicStampedReference;
+
+public class CAS {
+    public static void main(String[] args) {
+        AtomicStampedReference<Object> atomicStampedReference = new AtomicStampedReference<>(100,1);//利用时间戳解决 ABA问题
+
+        //线程a
+        new Thread(()->{
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            //如果修改版本号+1
+            System.out.println(atomicStampedReference.compareAndSet(100, 20,
+                    atomicStampedReference.getStamp(), atomicStampedReference.getStamp() + 1));//获取最新的版本号+1 在返回true
+            System.out.println("a1--"+atomicStampedReference.getStamp());
+
+
+            System.out.println(atomicStampedReference.compareAndSet(20, 100,
+                    atomicStampedReference.getStamp(), atomicStampedReference.getStamp() + 1));//获取最新的版本号+1 在返回true
+            System.out.println("a2--"+atomicStampedReference.getStamp());
+
+        },"a").start();
+
+
+        //线程b
+        new Thread(()->{
+            int stamp = atomicStampedReference.getStamp();//每个线程获取自己最开始的版本号，修改时，版本号必须与获取的相同
+            try {
+                TimeUnit.SECONDS.sleep(2);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            //如果修改版本号+1
+            System.out.println(atomicStampedReference.compareAndSet(100, 9999,
+                    stamp, atomicStampedReference.getStamp() + 1));//预期版本号获取的是最开始的版本号  现在实际版本号已经是3了 应返回false
+            //返回版本号和值
+            System.out.println("b--"+atomicStampedReference.getStamp());
+
+
+        },"b").start();
+    }
+}
+~~~
+
+
+
+#### 生产者消费者问题 线程通信
+
+静态方法锁的是Class属性，非静态方法锁的是这个对象。
+
+线程类：flag是为了保证线程按照 acbd的顺序执行 保证一个线程执行 其他都是wait状态。
+
+~~~java
+package com.example.demo.kuangstudy;
+
+public class Synchronized {
+    private  int num =0;
+    private int flag =1;
+    public synchronized  void a_de() throws InterruptedException {
+            while(num!= 0 || flag!=1){
+                this.wait();
+            }
+            num--;
+            flag=2;
+            this.notifyAll();
+            System.out.println("a_de: "+num);
+    }
+    public synchronized  void b_de() throws InterruptedException {
+        while(num!= 0|| flag!=3){
+            this.wait();
+        }
+            num--;
+            flag=4;
+            this.notifyAll();
+            System.out.println("b_de: "+num);
+    }
+    public synchronized  void c_in() throws InterruptedException {
+        while(num!= -1||flag!=2){
+            this.wait();
+        }
+            num++;
+            flag=3;
+            this.notifyAll();
+            System.out.println("c_in: "+num);
+
+    }
+    public synchronized  void d_in() throws InterruptedException {
+        while(num!= -1|| flag!=4){
+            this.wait();
+        }
+            num++;
+            flag=1;
+            this.notifyAll();
+            System.out.println("d_in: "+num);
+    }
+}
+~~~
+
+主类：
+
+~~~java
+package com.example.demo.kuangstudy;
+
+public class SynA {
+    public static void main(String[] args) {
+        Synchronized syn = new Synchronized();
+        new Thread(()->{
+            for (int i = 0; i < 10; i++) {
+                try {
+                    syn.a_de();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        },"A").start();
+
+        new Thread(()->{
+            for (int i = 0; i < 10; i++) {
+                try {
+                    syn.b_de();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        },"B").start();
+
+        new Thread(()->{
+            for (int i = 0; i < 10; i++) {
+                try {
+                    syn.c_in();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        },"C").start();
+
+        new Thread(()->{
+            for (int i = 0; i < 10; i++) {
+                try {
+                    syn.d_in();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        },"D").start();
+
+    }
+}
+~~~
+
+
+
+Lock锁实现
+
+~~~java
+package com.example.demo.kuangstudy.juc;
+
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+public class LockCondition {
+    private  int num =0;
+    private int flag =1;
+    Lock lock =new ReentrantLock();
+    Condition condition1 =lock.newCondition();
+    Condition condition2 =lock.newCondition();
+    Condition condition3 =lock.newCondition();
+    Condition condition4 =lock.newCondition();
+
+
+    public   void a_de() throws InterruptedException {
+        lock.lock();
+        try {
+            while(num!= 0 || flag!=1){
+                condition1.await();
+            }
+            num--;
+            flag=2;
+            condition3.signal();
+            System.out.println("a_de: "+num);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+    }
+    public   void b_de() throws InterruptedException {
+        lock.lock();
+        try {
+            while(num!= 0 || flag!=3){
+                condition2.await();
+            }
+            num--;
+            flag=4;
+            condition4.signal();
+            System.out.println("b_de: "+num);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+    }
+    public   void c_in() throws InterruptedException {
+        lock.lock();
+        try {
+            while(num!= -1 || flag!=2){
+                condition3.await();
+            }
+            num++;
+            flag=3;
+            condition2.signal();
+            System.out.println("c_in: "+num);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+
+    }
+    public   void d_in() throws InterruptedException {
+        lock.lock();
+        try {
+            while(num!= -1 || flag!=4){
+                condition4.await();
+            }
+            num++;
+            flag=1;
+            condition1.signal();
+            System.out.println("d_in: "+num);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+    }
+}
+~~~
+
+
+
+#### 死锁
+
+~~~linux
+在terminal中 输入
+    jps -l  #查看进程
+    jstack 进程号  #查看进程信息 如果该进程发生死锁 会进行报错
+    
+~~~
+
+
+
+
+
+#### 公平锁与非公平锁
+
+- 公平锁：先来先执行
+- 非公平锁：可以插队 
+
+一般默认使用非公平锁
+
+
+
+### 其他
+
+#### 邮件发送
+
+~~~java
+package com.example.demo.liaoxuefeng;
+
+import com.sun.mail.util.MailSSLSocketFactory;
+
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import java.security.GeneralSecurityException;
+import java.util.Properties;
+
+public class SendEmail {
+    public static void main(String[] args) throws GeneralSecurityException, MessagingException {
+        //简单邮件
+        Properties prop = new Properties();
+        prop.setProperty("mail.host","smtp.qq.com");
+        prop.setProperty("mail.transport.protocol","smtp");
+        prop.setProperty("mail.smtp.auth","true");
+
+        //设置ssl加密
+        MailSSLSocketFactory sf = new MailSSLSocketFactory();
+        sf.setTrustAllHosts(true);
+        prop.put("mail.smtp.ssl.enable","true");
+        prop.put("mail.smtp.ssl.socketFactory",sf);
+
+        /**
+         * 1、创建定义整个应用程序所需要的环境信息的session对象
+         * 2、通过session得到transport对象
+         * 3、使用邮箱用户名和授权码 连上邮件服务器
+         * 4、创建邮件
+         * 5、发送邮件
+         */
+        Session session =Session.getDefaultInstance(prop, new Authenticator() {
+            public PasswordAuthentication getPasswordAuthentication(){
+                 return new  PasswordAuthentication("1933799087@qq.com","vhpgiwejeguidiib");
+            }
+        });
+
+        //2、通过session得到transport对象
+        Transport ts =session.getTransport();
+
+        //3、使用邮箱用户名和授权码 连上邮件服务器
+        ts.connect("smtp.qq.com","1933799087@qq.com","vhpgiwejeguidiib");
+
+        //4、创建邮件
+        MimeMessage message = new MimeMessage(session);
+        message.setFrom(new InternetAddress("1933799087@qq.com"));//邮件发送人
+        message.setRecipients(Message.RecipientType.TO, String.valueOf(new InternetAddress("pengyujie99@163.com")));//邮件收件人
+        message.setSubject("这是一个模拟邮件");//标题
+
+        //图片数据
+        MimeBodyPart images = new MimeBodyPart();
+        DataHandler dh =new DataHandler(new FileDataSource("WangYiYun.jpg"));
+        images.setDataHandler(dh);
+        images.setContentID("1.jpg");
+
+        //正文数据
+        MimeBodyPart text = new MimeBodyPart();
+        text.setContent("<b>你好!这是一个java邮件测试！！不需要在意！！！！！</b> <img src='cid:1.jpg'>","text/html;charset=UTF-8");
+
+        //描述数据关系
+        MimeMultipart mm = new MimeMultipart();
+        mm.addBodyPart(images);
+        mm.addBodyPart(text);
+        mm.setSubType("related");
+
+        //设置到消息中，保存修改
+        message.setContent(mm);
+        message.saveChanges();//保存之后就可以发送了
+
+        //5、发送邮件
+        ts.sendMessage(message,message.getAllRecipients());
+
+        ts.close();
+
+    }
+}
+~~~
+
+
+
+
+
+#### 线程池
+
+线程复用，可以控制最大并发数，方便管理
+
+~~~java
+package com.example.demo.kuangstudy.pool;
+
+import java.util.concurrent.*;
+
+public class ThreadPool {
+    public static void main(String[] args) {
+//        //ExecutorService threadPool = Executors.newSingleThreadExecutor();//单个线程
+//        ExecutorService threadPool = Executors.newFixedThreadPool(5);//最大设置五个线程
+//        //ExecutorService threadPool1 = Executors.newCachedThreadPool();//可伸缩的
+//
+//        for (int i = 0; i < 3; i++) {
+//            threadPool.execute(()->{
+//                System.out.println(Thread.currentThread().getName()+" ok");
+//            });
+//        }
+        
+        //上面不推荐使用   推荐使用下面的方法进行创建线程池
+        
+        /**
+         * 四种拒绝策略
+         * 1.AbortPolicy()  抛出异常
+         * 2.CallerRunsPolicy()  哪来的回哪里 也就是由调用线程处理 
+         * 3.DiscardPolicy() 丢掉任务 不抛出异常 直接抛弃
+         * 4.DiscardOldestPolicy() 尝试去和最早的线程竞争 尝试做舔狗
+         */
+        ThreadPoolExecutor thread = new ThreadPoolExecutor(
+                2,5,3, TimeUnit.SECONDS,new LinkedBlockingDeque<>(3),Executors.defaultThreadFactory(), new ThreadPoolExecutor.AbortPolicy()
+        );//核心线程数  最大线程数 活跃时间 线程活跃时间单位 队列大小 默认的线程工厂 拒绝策略（共有四种）
+
+        for (int i = 0; i < 6; i++) {//根据上面参数 可以得 正常情况为2个线程进行处理 其余进行排队（队列大小为3） 当后续又需要开启线程时（>5） 就会开启其他线程 如果后续开启 线程大于5+3 时就会进行拒绝策略
+            thread.execute(() -> {
+                System.out.println(Thread.currentThread().getName() + " ok");
+            });
+        }
+    }
+}
+~~~
+
+
+
+#### lambda表达式
+
+(parameters) ->{ statements; }
+
+
+
+#### Stream流式计算
+
+其中有流式计算 、链式编程、函数式接口
+
+~~~java
+package com.example.demo.kuangstudy.juc;
+
+
+import java.util.Arrays;
+import java.util.List;
+
+public class Stream {
+    public static void main(String[] args) {
+        //Stream 流式计算
+        User user1 =new User(1,"a",24);
+        User user2 =new User(2,"b",29);
+        User user3 =new User(3,"c",23);
+        User user4 =new User(4,"d",24);
+        User user5 =new User(5,"e",24);
+        User user6 =new User(6,"f",27);
+        User user7 =new User(7,"g",28);
+        User user8 =new User(8,"h",28);
+        List<User> list = Arrays.asList(user1,user2,user3,user4,user5,user6,user7,user8);
+        list.stream()
+                .filter((u)->{return u.getAge()>24;})//年龄大于24
+                .filter((u)->{return u.getId()%2==0;})//id为偶数
+                .map((u)->{return u.getName().toUpperCase();})//name 改为大写
+                .sorted((min,max)->{return max.compareTo(min);})//name 从大到小排序
+                .limit(1)//只输出一个User
+                .forEach(System.out::println);//输出
+    }
+}
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

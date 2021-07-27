@@ -6,8 +6,8 @@ date:       2021-4-1 12:00:00
 author:     "Pengyujie"
 header-img: "img/post-bg-alibaba.jpg"
 tags:
-    - Redis
     - Java
+    - 中间件
 ---
 
 >redis为什么单线程还那么快？
