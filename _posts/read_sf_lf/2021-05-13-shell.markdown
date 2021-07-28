@@ -1,0 +1,234 @@
+---
+layout:     post
+title:      "Shell学习"
+subtitle:   "cut sed awk sort"
+date:       2021-05-13
+author:     "Pengyujie"
+header-img: "img/shell.jpg"
+tags:
+    - shell
+    - linux
+---
+
+>shell是一个命令行解释器。
+>$HOME  当前用户根目录；
+>$PWD 当前位置；
+>$SHELL shell的解析器位置；
+>$USER 用户。
+
+## 语句 
+<b>if判断</b>
+```shell
+if[ 条件判断式 ]：then
+程序
+fi
+```
+或者
+```shell
+if[ 条件判断式 ]
+then
+fi
+```
+<br>例如判断参数1是否是0，是0则输出success，是1则输出 hello me too
+```shell
+if [ $1 -eq 0 ]
+then
+        echo "success"
+elif [ $1 -eq 1 ]
+then
+        echo "hello me too"
+fi
+```
+
+<br><b>case语句</b>
+
+```shell
+case $1 in
+"peng")
+        echo "peng99"
+;;
+"yu")
+        echo "yu99"
+;;
+"jie")
+        echo "jie99"
+;;
+esac
+```
+
+<br><b>for循环</b>
+第一种使用：
+
+```shell
+s=0
+for(( i=0;i<=100;i++ ))
+do
+        s=$[$s+$i]
+done
+
+echo $s
+```
+第二种使用：
+
+```shell
+for i in $*
+do
+        echo "pengyujie 是 $i"
+done
+```
+
+
+
+$*和$@的区别  两者都是可以显示所有参数，前者一次显示所有，后者是分别显示。
+
+```
+for i in "$*"
+do
+        echo "pengyujie 是 $i"
+done
+
+echo "-------------fengefu---------------------"
+
+for i in "$@"
+do
+        echo echo "pengyujie 是 $i"
+done
+```
+<img src="/img/notes/shell/1.png" >
+
+<br><b>while 语句</b>
+<br>从 输入的参数1 加到100 例如参数1是99 则返回199。
+```shell
+i=$1
+s=0
+while [ $i -le 100 ]
+do
+        s=$[$s+$i]
+        i=$[$i+1]
+done
+
+echo $s
+```
+
+## shell工具（重点）
+<b>cut</b>
+<br>剪切数据使用：
+cut -d 分割 -f 列 文件
+```shell
+你 会 不 会
+是 不 是 不 会
+傻 了 吧
+子 哦 你
+```
+<img src="/img/notes/shell/2.png" >
+
+<br>cut题目与解答
+<img src="/img/notes/shell/3.png" >
+
+
+<br><b>sed</b>
+<br>进行数据的添加、删除、修改
+<br>sed  "3ahello"  cut.txt
+<br>3表示第三行,a表示添加 hello为添加的信息 ,cut.txt为操作文件。
+<br>sed "/123/ahello"  cut.txt  
+<br>在123的后面进行添加hello。
+
+<br>sed  "3d"  cut.txt 
+<br>删除第四行。
+<br>sed "1~2d" cut.txt 
+<br>从第一行开始 每过二行删除一行。
+<br>sed "/123/d" cut.txt 
+<br>删除带123的行。
+
+<br>sed "3chello" cut.txt 
+<br>将第一行替换为hello。
+
+<br>sed "s/123/hello" 
+<br>将123替换为hello 默认每行第一个123 ,加g为替换所有。
+<img src="/img/notes/shell/4.png" >
+
+<br><b>awk</b>
+<br><b>注意大小写</b>
+<br>awk -F ：'{ print $2 filename nr nf}' password    
+<br>表示以：分割 ,$2 表示第二列 ,filename表示文件名操作的（这里是password）,nr表示第几行,nf表示共几列。
+
+
+<br><b>sort</b>
+<br>sort -t : -nrk 2  sort.sh   
+<br>操作sort.sh文件,进行排序,以：为分割符,指定第二列为排序列,n为按数值大小排序, r为从大倒小,k为指定排序列。
+```shell
+ls：30：2                                zs：50：6
+zs：50：6                                wl：40：7
+wl：40：7        = 排序后==》            ls：30：2
+ss：20：1                                ss：20：1
+yu：10：3                                yu：10：3
+```
+<img src="/img/notes/shell/5.png" >
+
+## 自定义函数
+
+<br>basename 文件路径
+<br>获取最后的文件名
+<br>
+<br>dirname 路径
+<br>截取前面路径
+
+<br>read （选项）（参数）
+<br>-t 时间 -p 提示  
+<br>时间过后还没输入便会自动结束。
+
+```shell
+read -t 7 -p "请在7秒内输入：" name
+echo $name
+```
+
+
+<br>自定义函数 ：
+自定义一个函数sum用来计算二者之和
+```shell
+function sum(){
+        s=$[$1+$2]
+        echo $s
+}
+
+read -t 10 -p "please input your paratemer1:" p1
+read -t 10 -p "please input your paratemer2:" p2
+
+sum $p1 $p2
+```
+<img src="/img/notes/shell/6.png">
+
+## 面试题
+
+<br>1.使用linux命令 查看file1中空行所在的行号  
+```shell
+awk '/^$/{print nr }' test01.txt    
+```
+^$表示空行
+
+<br>2.计算第二列的和并输出
+```shell
+awk -F " " ' {sum+=$2} end {print sum}' 
+```
+
+
+<br>3.shell 脚本如何检查一个文件是否存在？ 如果不存在 该如何处理
+```shell
+if [ -f test01.txt ]
+then
+        echo "exist"
+else
+        echo "not exist"
+fi
+```
+
+<br>4.用shell写一个脚本 对无序数字排序并在最后输出总数
+```shell
+sort -n test04.txt | awk '{print $1; sum+=$1} END {print "sum="sum}'
+```
+
+<br>5.查找当前文件夹/shells 下所有的文本文件中包含有字符“peng”的文件名称
+```shell
+grep -r "peng" /home/pengyujie/shells |cut -d : -f 1
+```
+

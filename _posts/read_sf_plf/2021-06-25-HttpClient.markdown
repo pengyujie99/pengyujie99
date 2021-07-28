@@ -122,7 +122,7 @@ public class MDTest {
 
 POST
 
-```JAVA
+```java
 package com.example.demo.MD;
 
 import com.alibaba.fastjson.JSONObject;
@@ -210,7 +210,7 @@ public class Post {
 
 GET
 
-```JAVA
+```java
 package com.example.demo.MD;
 
 
@@ -389,7 +389,7 @@ public class PostQR {
 {"return_code":"01","return_msg":"聚合码预支付请求成功！","result_code":"01","merchant_name":"范琴","merchant_no":"824205541000001","terminal_id":"33333378","terminal_trace":"1234567890","terminal_time":"20210622120010","total_fee":"1","qr_url":"http://test.lcsw.cn:8045/lcsw/qrurl/9f598qp441","attach":null,"key_sign":"c298b0d07c96eda0ef5a5b04cd28661f"}
 ```
 
-<img src="/img/notes/HttpClient/1.png">
+<img src="/img/notes/HTTPClient/1.png">
 
 
 
@@ -554,13 +554,13 @@ public class Get {
 }
 ```
 
-<img src="/img/notes/HttpClient/2.png">
+<img src="/img/notes/HTTPClient/2.png">
 
 
 
 ### POST
 
-```JAVA
+```java
 package com.test.demo.post;
 
 import com.alibaba.fastjson.JSONObject;
@@ -623,7 +623,7 @@ public class Post {
 
 ```
 
-<img src="/img/notes/HttpClient/3.png">
+<img src="/img/notes/HTTPClient/3.png">
 
 
 
