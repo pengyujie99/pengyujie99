@@ -31,7 +31,7 @@ Java NIO系统的**核心**在于：**通道(Channel)和缓冲区(Buffer)**。�
 
 selector的作用就是配合一个线程来管理多个channel（fileChannel因为是阻塞式的，所以无法使用selector），获取channel上的事件进行监听，这些channel工作在非阻塞模式下，当一个channel没有需要执行的任务时，线程可以先去执行其他channel的任务。适合连接数较多，但流量比较少的场景。
 
-![img](D:\Typora\Blog\pengyujie99.github.io\img\notes\netty\1.jpg)
+<img src= "/img/notes/netty/1.jpg">
 
 若事件未就绪，调用selector的select()方法会阻塞线程，直到channel发生就绪事件，事件就绪之后，select()方法就会返回这些事件交给Thread去处理。
 
@@ -136,7 +136,9 @@ private int capacity;
 
 接收方的缓冲区的大小是有限的，当接收方的缓冲区满了以后，就需要**将信息截断**，等缓冲区空了以后再继续放入数据。这就会发生一段完整的数据最后被截断的现象
 
-#### 解决办法
+
+
+解决办法:
 
 - 通过get(index)方法遍历ByteBuffer，遇到分隔符时进行处理。注意：get(index)不会改变position的值
   - 记录该段数据长度，以便于申请对应大小的缓冲区
@@ -295,7 +297,7 @@ selector会在发生事件后，向selectedKeys集合中加入key。
 
 selectedKeys不会主动去删除已经处理的事件，需要手动删除，如果不删除，下次遍历进行处理的时候，有这个key但是事件已经处理就会报错。
 
-![image-20210730113808432](D:\Typora\Blog\pengyujie99.github.io\img\notes\netty\2.png)
+<img src= "/img/notes/netty/2.png">
 
 服务端
 
@@ -512,7 +514,7 @@ public class Client {
 
 实际步骤顺序
 
-![img](D:\Typora\Blog\pengyujie99.github.io\img\notes\netty\3.png)
+<img src= "/img/notes/netty/3.png">
 
 
 
