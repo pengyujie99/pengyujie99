@@ -1,0 +1,255 @@
+---
+layout:     post
+title:      "MySQL"
+subtitle:   "MySQL数据库"
+date:       2021-08-01 12:00:00
+author:     "Pengyujie"
+header-img: "img/notes/docker/4.jpg"
+catalog: true
+tags:
+    - Docker
+    - Java
+
+---
+
+> MySQL默认使用的引擎是innodb
+>
+
+
+
+|            | MYISAM         | INNODB         |
+| ---------- | -------------- | -------------- |
+| 事务       | 不支持         | 支持           |
+| 数据行锁   | 不支持（表锁） | 支持           |
+| 外键约束   | 不支持         | 支持           |
+| 全文索引   | 支持           | 不支持         |
+| 表空间大小 | 较小           | 是MYISAM的二倍 |
+
+
+
+
+
+语法
+
+~~~sql
+--DML语句
+--表操作
+CREATE TABLE B--创建表
+(ID INT,
+NAME VARCHAR(20));
+
+DELETE B--删除表内容
+ALTER TABLE B ADD email Varchar(20);--表添加一个字段
+
+DELETE FROM B--删除表内容
+DELETE B--删除表内容
+TRUNCATE TABLE B --删除表内容 保留结构，与上面的区别是无法rollback 和hwm标记复位
+
+ALTER TABLE B ADD email Varchar(20);--表添加一个字段
+DROP TABLE B; --删除表
+ALTER TABLE B DROP COLUMN email;--表删除一个字段
+--数据操作
+INSERT INTO B VALUES(1,'zhangsan');--添加一行数据
+INSERT INTO B VALUES(2,'lisi');
+INSERT INTO B VALUES(3,'pengyujie',1933799087)
+DELETE --删除一行数据
+FROM B
+WHERE B.Id=1
+UPDATE B SET email='1933799087@qq.com'--修改数据
+WHERE B.ID=3
+SELECT * FROM B ;--查询
+--用户
+GRANT USER user_name IDENTIFIED BY user_password--创建用户
+GRANT CREATE TABLE TO user_name--授权给用户
+-----
+~~~
+
+
+
+#### 表操作
+
+##### 修改表
+
+~~~sql
+ALTER TABLE B RENAME AS A; --修改表名
+ALTER TABLE B ADD email Varchar(20);--表添加一个字段--增加字段
+ALTER TABLE B MODIFY ID INT NOT NULL;--修改表字段 修改约束
+ALTER TABLE B CHANGE NAME NAME1 VARCHAR(100);--修改表字段 修改名称 属性
+ALTER TABLE B DROP NAME;
+~~~
+
+
+
+##### 删除表
+
+~~~sql
+DELETE FROM B--删除表内容
+DELETE B--删除表内容
+TRUNCATE TABLE B --删除表内容 保留结构，与上面的区别是无法rollback 和hwm标记复位
+~~~
+
+
+
+
+
+#### 数据操作
+
+##### DML语句
+
+~~~sql
+INSERT INTO B VALUES(1,'PENG');--增加 插入一条数据
+DELETE FROM B WHERE ID = 1; --删除 删除一条数据
+UPDATE B SET NAME='PENGYUJIE' WHERE ID = 1; --修改 修改一条数据
+SELECT * FROM B WHERE ID = 1 -- 查询
+
+--模糊查询运算符
+IS NULL --操作为NULL 结果为真
+IS NOT NULL --操作不为NULL 结果为真
+LIKE --匹配 可以结合符号使用 % 表示多个字符   _ 表示一个字符
+NOT LIKE --不匹配
+IN --表示范围
+BETWEEN A AND B--在AB之间 结果为真
+
+--左右连接
+SELECT s.studentNo s.studentName 
+FROM student s 
+left join result r
+on s.studentNo = r.studentNo --左连接 就是以左表为基础 右表进行补充没有匹配就返回null
+
+SELECT s.studentNo s.studentName 
+FROM student s 
+right join result r
+on s.studentNo = r.studentNo --右连接 就是以右表为基础 左表进行补充没有匹配就返回null
+
+SELECT s.studentNo s.studentName 
+FROM student s 
+inner join result r
+on s.studentNo = r.studentNo --内连接 就求二张表的交集
+
+自连接（将一张表当做二张表去 查询）
+~~~
+
+
+
+##### 添加外键约束
+
+~~~SQL
+ALTER TABLE 表名 
+ADD CONSTRAINT 约束名 FOREIGN KEY(作为外键的列) REFERENCES 哪个表(哪个字段)
+
+~~~
+
+
+
+##### 创建索引
+
+~~~sql
+create index index_student_name on student(name);--create index 索引名 on 表名(字段名)
+
+--索引原则
+不要对经常变动的数据加索引 
+小数据量的表没必要加索引（效果不明显）
+索引一般加在常用的数据上
+
+~~~
+
+
+
+
+
+
+
+
+
+#### 事务
+
+ACID（原子性 一致性 隔离性 持久性）
+
+- 脏读
+
+读到了 事务未提交前的数据
+
+比如  最开始 ABC 各有一百块钱 ，A给B转100 ，此时B变为200，事务未提交。C再给B转100，此时读到的数据是100（由于未提交），这时候B也要变为200。而实际正确的是B应该有300。
+
+
+
+- 不可重复读
+
+多次读，读到了不同的数据
+
+比如  读取B的数据，但是由于A C都在给B转钱，导致读取出的数据不一致。
+
+
+
+- 幻读
+
+读取的数据，多了或者少了一行
+
+比如 读取每个人的数据，突然多出来一个人的数据。
+
+
+
+
+
+#### 数据库备份
+
+
+
+1.直接拷贝物理文件
+
+2.在可视化工具中右键导出
+
+3.在cmd 利用mysqldump导出
+
+
+
+#### JDBC
+
+由于每一种数据库都有对应的驱动，对此sun公司开发一个统一规范去操作数据库，开发者去熟悉即可，也就是jdbc。
+
+数据版本不同，maven对应导入的驱动版本也应该不同。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

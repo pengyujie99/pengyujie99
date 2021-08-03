@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "springboot与微服务了解"
+title:      "微服务了解"
 subtitle:   "仅限了解还未开始学习"
 date:       2021-02-20 12:00:00
 author:     "Pengyujie"
@@ -9,7 +9,7 @@ tags:
     - SpringBoot
     - 微服务 
 ---
->springboot、SpringCloud、微服务，通过观看视频之后的个人理解。
+>SpringCloud、微服务，通过观看视频之后的个人理解。
 
 框架：spring （简化开发而生），springboot（在spring基础上更为简化），
 springcloud的就是业务模块化。  
@@ -27,26 +27,57 @@ pringCloud：
 springboot:
 是用来构建微服务，是用来发开一个个微服务。
 
+> 微服务是一种生态，实现模块化开发，它并不是一个技术，而是由多个技术掺杂起来的。
 
-微服务核心的四个问题（springcloud的诞生就是为了解决这个四个问题）
-```
-1.服务很多，客户端该怎么访问？
-2.这么多服务，服务之间如何通信？
-3.这么多服务，如何治理？
-4.服务挂了，怎么办？
-```
-三种解决方案：
+~~~
+微服务需要解决的四个问题
 
-1.springcloud netflix
-api网关，zuul主键
-feign -- httpclient --http通信方式，同步、阻塞
-服务注册发现：Eureka
-熔断机制：Hystrix
+​	1、服务很多，客户端如何访问？
 
-2.Apache Dubbo Zookeeper
-api：没有，找第三方组件，或者自己实现
-Dubbo
-服务注册发现：Zookper
-熔断机制：没有,借助Hystrix
+​	2、服务很多，服务之间如何通信？
 
-3.sprngcloudAlibaba（一站式解决方案）
+​	3、服务很多，如何管理？
+
+​	4、服务挂了怎么办？
+
+1.API
+2.HTTP RPC
+3.注册和发现
+4.熔断机制
+
+
+三套解决方案：
+	
+	1.Spring Cloud NetFlix	一站式解决方案
+	
+		api网关，zuul组件
+		通信：Feign-- HTTPClinet --HTTP通信方式 同步 阻塞
+		服务注册发现：Eureka
+		熔断机制：Hystrix
+	
+	
+	
+    
+    2.Apache Dubbo Zookeeper	半自动 还需要整合其他的
+    API:没有 需要找第三方组件或者自己实现
+    通信：Dubbo --RPC通信
+    服务注册发现：Zookeeper
+    熔断机制：没有 可以借助Hystrix
+    
+    
+    
+    
+    
+    3.Spring Cloud Alibaba	最新的一站式解决方案
+	
+
+
+
+
+
+
+
+~~~
+
+未完待续
+
