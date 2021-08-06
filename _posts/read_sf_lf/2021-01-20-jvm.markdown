@@ -11,8 +11,11 @@ tags:
 ---
 >对JVM的初步认识。
 
+<img src="/img/notes/blog-desktop.jpg" >
 
-<br><b>JVM构成</b>
+
+
+<b>JVM构成</b>
 <br>	* 类加载器
 <br>	* 运行时数据区（五大组成）
 <br>&ensp; &ensp; &ensp; 1. 程序计数器

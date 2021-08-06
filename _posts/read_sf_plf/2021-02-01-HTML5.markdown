@@ -1,0 +1,220 @@
+---
+title: "HTML5"
+subtitle: "了解前端HTML5的使用"
+layout: post
+date:   2021-02-01 12:00:00
+author: "Pengyujie"
+header-style: text
+tags:
+  - 前端
+  - HTML
+---
+
+> 有基本的html5的使用，可以在下面找到。
+
+
+
+#### HTML5的使用
+
+~~~html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HTML5的简单使用</title>
+</head>
+<!--页面结构 头部 主体 脚部 -->
+
+<!--
+readonly 只读
+hidden 隐藏
+disabled 禁用
+-->
+<body>
+<!--锚链接的 锚点-->
+<a name="top"></a>
+
+<!--音频和视频
+src 资源路径
+autoplay 自动播放
+controls是下面控制播放-->
+<video src="片头.pm4" controls autoplay></video>
+<audio src="music.pm3" controls autoplay></audio>
+
+<!--表单
+placeholder 提示
+required 必须要提交
+action  表单提交的位置 可以是一个网站 也可以是一个请求处理的地址
+method 提交方式 post get-->
+<form action="jspay.html" method="post" name="form">
+    <p>昵称：<input type="text" placeholder="请输入昵称" required></p>
+    <p>密码：<input type="password" placeholder="请输入密码" required>
+
+    <!--文本框和单选框
+    checked 默认选中
+    需要将name设置为一样 证明为一个组 才能实现单选-->
+    <p>性别：
+        <input type="radio" value="boy" name="sex" checked>男
+        <input type="radio" value="girl" name="sex">女
+    </p>
+
+<!--    多选框-->
+    <p>爱好：
+        <input type="checkbox" value="sleep" name="hobby">睡觉
+        <input type="checkbox" value="code" name="hobby">写代码
+        <input type="checkbox" value="game" name="hobby">打游戏
+        <input type="checkbox" value="run" name="hobby">跑步
+    </p>
+
+<!--下拉框
+selected 默认选中-->
+    <p>
+        <select  name="列表名称">
+            <option value="提交时候的key值" selected>中国|Chinese</option>
+            <option value="提交时候的key值">美国|American</option>
+            <option value="提交时候的key值">日本|Japanese</option>
+            <option value="提交时候的key值">印度|India</option>
+        </select>
+    </p>
+
+<!--    文本域
+cols 列
+rows 行-->
+    <p>
+        <textarea name="textarea" cols="5" rows="2"></textarea>
+    </p>
+
+<!--    文件域-->
+    <p>
+        <input type="file" name="files">
+        <input type="button" value="上传" name="upload">
+    </p>
+
+
+<!--    邮件验证 和url验证 数字自动增减-->
+    <p>
+        邮箱：<input type="email" name="email">
+    </p>
+    <p>
+        自定义邮箱：<input type="text" name="diyEmail" pattern="写入邮箱的自定义表达式">
+    </p>
+    <p>
+        URL：<input type="url" name="url">
+    </p>
+<!--    自动增减的 数字每次为10 最大为100 最小为0-->
+    <p>金额：
+        <input type="number" max="100" min="0" step="10">
+    </p>
+
+<!--    滑块-->
+    <p>滑块：
+        <input type="range" name="hua" min="0" max="100" step="5">
+    </p>
+
+<!--    搜索框-->
+    <p>搜索框：
+        <input type="search" name="search">
+    </p>
+
+
+<!--    按钮
+submit 提交按钮
+reset  重置按钮
+button 普通按钮
+images 图片按钮 -->
+    <P>
+        <input type="button" value="点击变长" name="btn1">
+        <input type="image"  src="tag-bg.jpg" height="50px" width="80px">
+    </P>
+    <p>
+    <input type="submit">
+    <input type="reset">
+    </p>
+
+</form>
+
+<!--
+_blank 在新的标签页中打开
+_self 在本网页打开
+-->
+<p><a href="https://pengyujie99.github.io/" target="_blank"> <img src="tag-bg.jpg" width="20px" height="20px"></a></p>
+
+
+<!--内联框架-->
+<iframe src="https://pengyujie99.github.io/" frameborder="0" width="500px" height="250px">
+</iframe>
+
+<!--功能链接-->
+<p><a href="mailto:1933799087@qq.com"> 联系我</a></p>
+
+
+<!--有序列表和无序列表  自定义列表-->
+<ul>
+    <li>java</li>
+    <li>c++</li>
+    <li>python</li>
+    <li>go</li>
+    <li>php</li>
+</ul>
+<hr/>
+<ol>
+    <li>java</li>
+    <li>c++</li>
+    <li>python</li>
+    <li>go</li>
+    <li>php</li>
+</ol>
+<hr/>
+<dl>
+    <dt>学科</dt>
+
+    <dd>语文</dd>
+    <dd>数学</dd>
+    <dd>外语</dd>
+
+    <dt>老师</dt>
+
+    <dd>语文老师</dd>
+    <dd>数学老师</dd>
+    <dd>外语老师</dd>
+</dl>
+
+<!--表格
+tr 表示行
+td 表示每行的一个数据-->
+<table border="1px">
+    <tr>
+        <td>1-1</td>
+        <td>1-2</td>
+        <td>1-3</td>
+        <td>1-4</td>
+    </tr>
+
+    <tr>
+        <td>2-1</td>
+        <td>2-2</td>
+        <td>2-3</td>
+        <td>2-4</td>
+    </tr>
+
+    <tr>
+        <td>3-1</td>
+        <td>3-2</td>
+        <td>3-3</td>
+        <td rowspan="2">3-4</td>
+    </tr>
+
+    <tr>
+<!--colspan 跨列  rowspan 跨行-->
+        <td colspan="3">4-1</td>
+    </tr>
+
+</table>
+
+<!--锚链接-->
+<p><a href="#top" >回到顶部 </a></p>
+
+</body>
+</html>
+~~~
+
