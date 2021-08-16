@@ -120,7 +120,7 @@ public interface UserMapper extends BaseMapper<User> {
 }
 ```
 
-### 在主启动类添加[@MapperScan](https://github.com/MapperScan)注解
+### 在主启动类添加@MapperScan注解
 
 ```java
 package com.wsk;
@@ -128,6 +128,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 //扫描mapper包下的所有接口
+@MapperScan("com.peng.mybatisplus.mapper")
 @SpringBootApplication
 public class MybatisPlusApplication {
     public static void main(String[] args) {
