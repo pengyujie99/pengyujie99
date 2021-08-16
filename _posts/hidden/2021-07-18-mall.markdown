@@ -18,7 +18,9 @@ tags:
 
 #### 处理父子依赖
 
-首先在父依赖，将需要进行<packaging>pom</packaging>然后将需要管理的包用<dependencyManagement></dependencyManagement>进行包住
+首先在父依赖，将需要进行`<packaging>pom</packaging>`
+
+然后将需要管理的依赖放入`<dependencyManagement> 需要管理的依赖 </dependencyManagement>`
 
 父依赖
 

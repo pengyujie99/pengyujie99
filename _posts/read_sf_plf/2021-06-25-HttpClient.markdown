@@ -23,7 +23,7 @@ tags:
 
 
 
-### 支付接口环境
+## 支付接口环境
 
 举例：
 
@@ -67,7 +67,7 @@ key_sign=md5(pay_ver=100&pay_type=020&service_id=010&merchant_no=824205541000001
 
 
 
-### 利用HttpClient实现接口访问
+## 利用HttpClient实现接口访问
 
 - MDTest（MD5加密 工具类）
 
@@ -714,4 +714,251 @@ public class MDTest {
 ```
 
 
+
+
+
+## 付款码支付 
+
+
+
+自己写的一个demo
+
+main方法
+
+~~~java
+package com.example.demo.barcodepay;
+
+import com.example.demo.barcodepay.dao.Barcodepay;
+import com.example.demo.barcodepay.service.PayPost;
+import com.example.demo.barcodepay.service.impl.PayPostImpl;
+
+public class BarcodePay {
+    public static void main(String[] args) {
+
+        Barcodepay barcodepay = new Barcodepay();
+
+        barcodepay.setPay_ver("100");
+        barcodepay.setPay_type("010");
+        barcodepay.setService_id("010");
+        barcodepay.setMerchant_no("816107297000001");
+        barcodepay.setTerminal_id("33335474");
+        barcodepay.setTerminal_trace("123456");
+        barcodepay.setTerminal_time("20210812120000");
+        barcodepay.setAuth_no("102156498523457625");
+        barcodepay.setTotal_fee("1");
+
+        String result;
+        PayPost payPost = new PayPostImpl();
+        result = payPost.post("http://test.lcsw.cn:8045/lcsw/pay/100/barcodepay", barcodepay,"access_token=bc4a32bc9a7845aa8cd919c424dbbf28");
+        System.out.println(result);
+    }
+}
+
+~~~
+
+
+
+dao层：
+
+~~~java
+package com.example.demo.barcodepay.dao;
+
+import lombok.Data;
+
+@Data
+public class Barcodepay {
+
+    private String pay_ver;
+    private String pay_type;
+    private String service_id;
+    private String merchant_no;
+    private String terminal_id;
+    private String terminal_trace;
+    private String terminal_time;
+    private String auth_no;
+    private String total_fee;
+    private String sub_appid;
+    private String order_body;
+    private String attach;
+    private String goods_detail;
+    private String goods_tag;
+
+}
+
+~~~
+
+
+
+service层：
+
+接口
+
+~~~java
+package com.example.demo.barcodepay.service;
+
+public interface PayPost<K> {
+    String post(String url, K barcodepay, String str);
+}
+
+~~~
+
+实现：
+
+~~~java
+package com.example.demo.barcodepay.service.impl;
+
+import com.alibaba.fastjson.JSONObject;
+import com.example.demo.MD.MDTest;
+import com.example.demo.MD.service.HcPost;
+import com.example.demo.MD.service.HcPostImpl;
+import com.example.demo.barcodepay.service.PayPost;
+import lombok.extern.slf4j.Slf4j;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+@Slf4j
+public class PayPostImpl<K> implements PayPost<K>{
+    @Override
+    public String post(String url, K barcodepay, String str) {
+        MDTest mdTest = new MDTest();
+        //字典序 将数据保存到一个list中，然后Collections.sort(list) 此时list中已经字典序了 接下来将值以url形式排好 赋值给str1
+        //文档序就是不进行Collections.sort(list)
+        //ArrayList<String> list = new ArrayList<>();
+        ArrayList<String> list1 = new ArrayList<>();
+        Class<?> clazz1 = barcodepay.getClass();
+        for (Field field : clazz1.getDeclaredFields()) {
+            field.setAccessible(true);
+            String fieldName = field.getName();
+            Object value = null;
+            try {
+                value = field.get(barcodepay);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            if((fieldName!="attach")&&(fieldName!="order_body")
+                    &&(fieldName!="sub_appid")&&(fieldName!="goods_detail")
+                    &&(fieldName!="goods_tag")){//这些非必传
+                list1.add(fieldName+"="+value);
+            }
+        }
+
+
+        log.info("==========================");
+        //log.info("list:"+list.toString());
+        log.info("list1:"+list1.toString());
+        log.info("==========================");
+
+        //Collections.sort(list1);//如果是字典序 就需要加上这段代码
+        String str1=null;
+        //将值以url形式排序
+        for (int i = 0; i < list1.size(); i++) {
+            if(i==0){
+                str1 = list1.get(i);
+            }else{
+                str1 = str1+"&"+ list1.get(i);
+            }
+        }
+
+
+        System.out.println(str1);
+        String str3="&"+str;
+        //MD5加密
+        String ks = mdTest.encryption(str1+str3);//调用方法生成MD5加密后 赋值给ks（key_sign）
+        System.out.println("ks:"+ks);
+
+        //Map<String, Object> map = new HashMap<String, Object>();
+
+        Map<String, Object> map1 = new HashMap<String,Object>();
+        Class<?> clazz = barcodepay.getClass();
+        for (Field field : clazz.getDeclaredFields()) {
+            field.setAccessible(true);
+            String fieldName = field.getName();
+            Object value = null;
+            try {
+                value = field.get(barcodepay);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            if((fieldName!="attach")&&(fieldName!="order_body")
+                    &&(fieldName!="sub_appid")&&(fieldName!="goods_detail")
+                    &&(fieldName!="goods_tag")){
+                map1.put(fieldName, value);
+            }
+        }
+
+        map1.put("key_sign", ks);
+        
+        Object o = JSONObject.toJSON(map1);
+        log.info("==========================");
+        //log.info("map:"+map.toString());
+        log.info("请求参数String格式:"+map1.toString());
+        log.info("请求参数JSON格式:"+o);
+        log.info("==========================");
+
+        HcPost hcPost =new HcPostImpl();
+        String response = hcPost.response(url, o);
+        return response;
+    }
+}
+~~~
+
+
+
+接口：
+
+~~~java
+package com.example.demo.barcodepay.service;
+
+public interface HcPost {
+    String response(String url,Object o);
+}
+~~~
+
+
+
+实现：
+
+~~~java
+package com.example.demo.barcodepay.service.impl;
+
+import com.example.demo.MD.service.HcPost;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+
+public class HcPostImpl implements HcPost {
+    @Override
+    public String response(String url, Object o) {
+        try {
+            CloseableHttpClient httpClient = HttpClients.createDefault();//创建一个httpclicent对象
+            HttpPost httpPost = new HttpPost(url);//创建一个httppost对象 url为url
+            //StringEntity se = new StringEntity(entity, "UTF-8"); //请求体类型
+            StringEntity s = new StringEntity(o.toString());
+            s.setContentEncoding("UTF-8");
+            s.setContentType("application/json");//发送json数据需要设置contentType设为application/json
+            httpPost.setEntity(s); //httppost对象的Entity设为s
+            CloseableHttpResponse response = httpClient.execute(httpPost);//响应
+            HttpEntity entity1 = response.getEntity();
+            String resStr = null;
+            if (entity1 != null) {
+                resStr = EntityUtils.toString(entity1, "UTF-8");
+            }
+            httpClient.close();
+            response.close();
+            return resStr;//打印响应的数据
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+}
+~~~
 
