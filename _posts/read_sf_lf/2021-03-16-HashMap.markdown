@@ -15,8 +15,10 @@ tags:
 
 <img src="/img/notes/1.jpg" >
 
-<div>
+
+
 #### Put方法
+
 
 进行put.("apple",0)，需要利用一个哈希函数进行确定插入位置 index = Hash("apple"),然后进行插入。
 
@@ -45,7 +47,7 @@ tags:
 
 
 
-#### <b>Get方法</b>
+#### Get方法
 
 根据key进行查找value时，将输入的key进行一次映射查找出index， index=Hash("apple")
 <br>由于查出来的index下的数据，可能是一个链表结构，这时候就需要顺着链表头结点，依次往下查找
@@ -102,7 +104,7 @@ public class HashMapSource {
         map.put("java","jie");
         System.out.println(map);
 
-        /** put 源码解读
+        /** put 源码解读 jdk8
          * public V put(K key, V value) {
          *         return putVal(hash(key), key, value, false, true);
          *     }

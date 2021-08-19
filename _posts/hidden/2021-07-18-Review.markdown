@@ -4,7 +4,7 @@ title:      "回顾"
 subtitle:   "对网络编程等基础的回顾"
 date:       2021-07-18 12:00:00
 author:     "Pengyujie"
-header-img: "img/post-bg-rwd.jpg"
+header-img: "img/tag-bg.jpg"
 hidden: true
 tags:
     - Java
