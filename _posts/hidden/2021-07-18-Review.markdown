@@ -1204,7 +1204,132 @@ public static Map<String, Object> objectToMap(Object obj) throws IllegalAccessEx
 
 
 
+### 集合
 
+#### Collection
+
+~~~java
+package com.collection;
+
+import java.util.*;
+
+public class Collection {
+    public static void main(String[] args) {
+
+        System.out.println("=====集合测试======");
+
+        System.out.println("=====ArrayList======");
+        //有序 可重复 可存入空值
+        List list =new ArrayList();
+        list.add("666");
+        list.add(333);
+        list.add("hello");
+        list.add(null);
+        list.add("hello");
+        System.out.println(list);
+        Iterator iterator = list.iterator();
+        while(iterator.hasNext()){
+            System.out.println(iterator.next());
+        }
+
+        System.out.println("=====HashSet======");
+        //不可重复  可存入空值 无序 但可以存入null
+        Set hashSet =new HashSet();
+        hashSet.add(null);
+        hashSet.add("hello");
+        hashSet.add("peng");
+        hashSet.add("yu");
+        hashSet.add("jie");
+        System.out.println(hashSet);
+        for (Object o : hashSet) {
+            System.out.println(o);
+        }
+
+
+        System.out.println("=====TreeSet======");
+//        TreeSet的排列顺序与重写的compareTo()方法的返回值有关。
+//        return 0:元素每次进行比较，都认为是相同的元素，这是就不再向TreeSet里面插入除第一个元素以外的元素，所以TreeSet中就只插入了一个元素。
+//        return 1:元素每次进行比较，都认为新插入的元素比上一个元素大，于是二叉树存储时，会储存在根的右侧，读取时就是正序排列，先进先出。
+//        return -1:元素每次进行比较，都认为新插入的元素比上一个元素小，于是二叉树存储时，会储存在根的左侧，读取时就是倒序排列，先进后出。
+
+        //默认不可重复  可存入空值 无序 但只能存入一种格式  重写compareTo()方法之后可以多种格式 顺序和compareTo()方法有关
+        Set treeSet =new TreeSet(new MyComparator());
+        treeSet.add(null);
+        treeSet.add("hello");
+        treeSet.add("peng");
+        treeSet.add("yu");
+        treeSet.add("jie");
+        treeSet.add("hello");
+        System.out.println(treeSet);
+        for (Object o : treeSet) {
+            System.out.println(o);
+        }
+    }
+}
+
+class MyComparator implements Comparator
+{   //重写compare方法
+    @Override
+    public int compare(Object o1, Object o2) {
+        return 1;
+    }
+}
+
+~~~
+
+
+
+
+
+#### 模拟数组加链表
+
+编写一个Node类
+
+~~~java
+package com.collection.collectionMonitor;
+
+public class Node {
+    public Object item;//存储数据
+    public Node next;//下一个节点
+
+    public Node(Object item, Node next) {
+        this.item = item;
+        this.next = next;
+    }
+}
+~~~
+
+主方法：
+
+~~~java
+package com.collection.collectionMonitor;
+
+public class Monitor {
+    public static void main(String[] args) {
+        //创建一个数组 然后数组存入的对象有链表属性 模拟了一个数组加链表
+        Node[] table =new Node[16];//创建一个16大小的数组
+        System.out.println(table);
+
+        Node peng = new Node("peng", null);
+        table[2] = peng;//将一个Node对象存入 table数组
+
+        Node yu = new Node("yu", null);
+        peng.next = yu;//存入链表
+
+        Node jie = new Node("jie", null);
+        yu.next = jie;//存入链表
+
+        Node hello = new Node("hello", null);
+        table[3] = hello;//将一个Node对象存入 table数组
+    }
+}
+~~~
+
+
+
+效果如下图：
+
+<img src="/img/notes/review/1.png" >
 
 
 

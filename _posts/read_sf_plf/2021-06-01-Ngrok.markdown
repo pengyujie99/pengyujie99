@@ -1,0 +1,105 @@
+---
+layout:     post
+title:      "Ngrok"
+subtitle:   "Ngrok内网穿透"
+date:       2021-06-01
+author:     "Pengyujie"
+header-img: "img/tag-bg.jpg"
+tags:
+    - Java
+    - NAT
+
+---
+
+### 内网穿透
+
+>就是让自己的网址暴露出去，让外网可以访问。比如你写了一个网站，如果在家里运行，那么只能自己电脑和同一个局域网（比如连接同一个网络 WiFi）的电脑可以访问。如果要让外界访问到这个网站就需要使用NAT技术，也就是内网穿透。
+
+
+
+早些时候，IPV4地址够用的时候是可以每个电脑直接通过ip进行访问，不需要用到内网穿透。
+
+随着设备数量增加，ipv4地址不够，ipv6出现，这时候想要访问到这个ipv6的设备就需要一个公网ip。
+
+而当自己所能操作的范围内没有公网ip，就不能实现自己想要的内网穿透。但实际上只要你能上网，对外而言你就一定有一个公网ip，只是你操作不到！比如小区局域网、城域局域网。
+
+比如：你在家使用手机上网，你能访问到外界网络就是NAT（内网穿透），因为你的路由器分配给了你一个公网ip你并不知道。家里其他人能上网同样如此。
+
+
+
+#### 进入官网 注册账号，然后登入
+
+**[ngrok官网](https://ngrok.com/)**
+
+我是用的github直接登入，复制身份令牌
+
+<img src="/img/notes/ngrok/1.png">
+
+
+
+#### 点击设置安装，安装对应的安装包，然后运行
+
+将对应的令牌写入yml，运行如下命令（这是window的cmd命令 linux为./）
+
+~~~shel
+ngrok authtoken 1wsYWmAzYzEUCayWFG6AZVeeRcJ_2b5K4j4gascYzUDs1TsN9
+~~~
+
+
+
+#### 将端口暴露
+
+~~~shell
+ngrok http 9090
+~~~
+
+
+
+成功
+
+<img src="/img/notes/ngrok/2.png">
+
+
+
+之后可以通过对应的公网ip（https://6233f1e8c4ce.ngrok.io）进行访问了内网（http://localhost:9090）了。
+
+
+
+#### URL路径问题
+
+访问遇到了一个之前的问题，之前解决但是忘了记录，想起来现在记录一下
+
+首先先说一下设置图标的二种
+
+- 全局设置为统一图标
+
+在对应的根路径添加favicon.ico图标格式的文件。
+
+- 对一个页面添加图标
+
+在HTML中添加图片，不一定要ico格式文件。
+
+~~~html
+<link rel="icon" href="../images/favicon.ico" type="image/x-icon" />
+~~~
+
+
+
+问题：
+
+当我们设置路径的时候，设置完成之后可以ctrl+点击  进入对应的资源的时候，我们以为是对的，但是我们启动项目结果资源404。
+
+这时候可能是路径问题，比如当我设置favicon.ico的路径：为`../static/images/favicon.ico` 此时点击可以进去对应的资源。启动项目后图标没有出来图标资源404。
+
+解决：如果我们将其改为`../images/favicon.ico` 点击并不能访问到对应的资源，但是启动后资源是可以获取到的。../ 是从根目录开始这里是从static目录开始。
+
+**注意：对于favicon.ico来说，图片大小也不能过大，否则也是404，即使路径正确。**
+
+
+
+
+
+#### 扩展
+
+ngrok 除了提供端口映射之外，还提供了一个实时的Web UI，您可以在其中查看你的隧道上运行的所有HTTP流量。在启动 ngrok 之后，只需在Web浏览器中打开[http://localhost:4040](https://links.jianshu.com/go?to=http%3A%2F%2Flocalhost%3A4040%2F)即可检查请求详细信息。
+
