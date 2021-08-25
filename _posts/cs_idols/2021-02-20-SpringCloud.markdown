@@ -7,6 +7,7 @@ author:     "Pengyujie"
 header-img: "img/post-bg-rwd.jpg"
 tags:
     - SpringBoot
+    - SpringCloud
     - 微服务 
 ---
 >SpringCloud、微服务，通过观看视频之后的个人理解。

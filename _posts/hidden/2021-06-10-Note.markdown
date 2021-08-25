@@ -368,3 +368,265 @@ jinfo 进程号	#打印信息
 jstack 进程号	#查看进程所包含的线程 以及信息
 ~~~
 
+
+
+#### 实体类中为什么要实现Serializable序列化接口
+
+确切的说应该是对象的序列化，一般程序在运行时，产生对象，这些对象随着程序的停止运行而消失，但如果我们想把某些对象（因为是对象，所以有各自 不同的特性）保存下来，在程序终止运行后，这些对象仍然存在，可以在程序再次运行时读取这些对象的值，或者在其他程序中利用这些保存下来的对象。这种情况 下就要用到对象的序列化。
+
+只有序列化的对象才可以存储在存储设备上。为了对象的序列化而需要继承的接口也只是一个象征性的接口而已，也就是说继承这个接口说明这个对象可以 被序列化了，没有其他的目的。**之所以需要对象序列化，是因为有时候对象需要在网络上传输，传输的时候需要这种序列化处理，从服务器硬盘上把序列化的对象取出，然后通过网络传到客户端，再由客户端把序列化的对象读入内存，执行相应的处理。**
+
+
+
+#### CAP
+
+就是一致性（Consistency）、可用性（Availability）和分区容错性（Partition）。CAP 理论告诉我们：**在一个分布式系统中，不可能同时满足一致性（Consistency)，可用性（Availability）和分区容错性（Partition tolerance），最多只能同时满足其中的2个**。
+
+
+
+#### 反射调优
+
+关闭检测 将其设为true`eat.setAccessible(true)`  //直接通过   取消安全检测 反射调优
+
+~~~java
+package com.example.demo.kuangstudy.hsp;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+public class Reflect {
+    public static void main(String[] args) throws ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+        //普通调用
+        long start = System.currentTimeMillis();
+        Dog dog = new Dog();
+        for (int i = 0; i < 200000000; i++) {
+            dog.eat();
+        }
+        long end = System.currentTimeMillis();
+        System.out.println("普通时长"+(end-start));
+
+        //反射调用
+        Class<?> cls = Class.forName("com.example.demo.kuangstudy.hsp.Dog");
+        Object o = cls.newInstance();
+        Method eat = cls.getMethod("eat");
+        //eat.setAccessible(true);  //直接通过 取消安全检测 反射调优
+        long start1 = System.currentTimeMillis();
+        for (int i = 0; i < 200000000; i++) {
+            eat.invoke(o);
+        }
+        long end1 = System.currentTimeMillis();
+        System.out.println("反射时长："+(end1-start1));
+    }
+}
+
+class  Dog{
+    public void eat(){
+        
+    }
+}
+ //发现正常调用所需时间最短 其次是关闭安全检测进行反射调用 最后是不关闭进行反射调用
+~~~
+
+
+
+####  反射获取属性（包括私有属性）
+
+创建了一个User类
+
+~~~java
+package com.example.demo.kuangstudy.hsp.reflect;
+
+import lombok.Data;
+
+@Data
+public class User {
+    private String name;
+    private String pwd;
+    private Integer age;
+    private String hobby;
+}
+~~~
+
+
+
+获取属性并打印
+
+~~~java
+package com.example.demo.kuangstudy.hsp.reflect;
+
+public class Field {
+    public static void main(String[] args) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+        Class<?> userClass = Class.forName("com.example.demo.kuangstudy.hsp.reflect.User");
+        
+        Object o = userClass.newInstance();//利用反射来创建对象
+        System.out.println(""+o);
+
+
+        java.lang.reflect.Field[] declaredFields = userClass.getDeclaredFields();
+        for (java.lang.reflect.Field declaredField : declaredFields) {
+            //必须要使用setAccessible爆破 才能获取私有的属性
+            declaredField.setAccessible(true);
+            String key = declaredField.getName();
+
+            Object value = declaredField.get(o);//获取对象o 对应Field的 value值
+            System.out.println(key+" : "+value);
+
+        }
+		//普通创建对象，利用反射获取属性
+        User user = new User();
+        user.setAge(18);
+        user.setHobby("swimming");
+        user.setPwd("123");
+        user.setName("pengyujie");
+
+        java.lang.reflect.Field[] declaredFields1 = user.getClass().getDeclaredFields();
+        for (java.lang.reflect.Field field : declaredFields1) {
+            //必须要使用setAccessible爆破 才能获取私有的属性
+            field.setAccessible(true);
+            String key = field.getName();
+
+            Object value = field.get(user);//获取对象user 对应Field的 value值
+            System.out.println(key+" : "+value);
+        }
+
+    }
+}
+~~~
+
+
+
+结果
+
+~~~java
+User(name=null, pwd=null, age=null, hobby=null)
+name : null
+pwd : null
+age : null
+hobby : null
+name : pengyujie
+pwd : 123
+age : 18
+hobby : swimming
+~~~
+
+
+
+
+
+
+
+
+
+## 问题
+
+`len=is.read(buffer)`不为-1
+
+写了一个服务器来接收并打印对方传过来的信息，发现`len=is.read(buffer)` 有数据时，正常返回数据长度，当 is  没有数据时，再次执行并不会为-1，而是直接在这里阻塞了，不在往下执行。
+
+个人分析  由于接受的is不是对方 getoutstream过来的 所以read方法去读就算没数据 也不会返回-1
+
+~~~java
+package com.service;
+
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class ServiceSocket {
+    public static void main(String[] args) {
+        ServerSocket serverSocket =null;
+        Socket socket=null;
+        InputStream is =null;
+        ByteArrayOutputStream baos =null;
+
+        while(true){
+            try {
+                //1 创建一个服务器地址
+                serverSocket = new ServerSocket(9999);
+                //2 等待客户端连接过来
+                socket = serverSocket.accept();
+                Thread.sleep(5);
+                //3 读取客户端传过来的消息
+                is = socket.getInputStream();//is不是对方 outstream过来的 所以read就算没数据 也不会返回-1
+                //管道流
+                baos =new ByteArrayOutputStream();
+
+                byte[] buffer =new byte[1024];
+                int len =0;
+
+                while((len=is.read(buffer)) != -1){//这一步 不动了
+                    baos.write(buffer,0,len);
+                    System.out.println("len:"+len);
+                    //System.out.println(is.read(buffer));
+                    System.out.println(baos.toString());
+                }
+                System.out.println("信息："+baos.toString());//这一步永远无法执行
+            }catch (IOException | InterruptedException e){
+                e.printStackTrace();
+            }finally {
+                if(baos!=null){
+                    try {
+                        baos.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if(is!=null){
+                    try {
+                        is.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if(socket!=null){
+                    try {
+                        socket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if(serverSocket!=null){
+                    try {
+                        serverSocket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                System.out.println("异常了！！");
+            }
+
+        }
+    }
+}
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
