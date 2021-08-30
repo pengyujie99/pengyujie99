@@ -621,12 +621,6 @@ public class WangYiYun {
 
 
 
-### 仿QQ通讯
-
-
-
-
-
 
 
 ### JUC
@@ -927,6 +921,137 @@ public class LockCondition {
 - 非公平锁：可以插队 
 
 一般默认使用非公平锁
+
+
+
+### 反射
+
+#### 反射调优
+
+关闭检测 将其设为true`eat.setAccessible(true)`  //设置为true可以直接通过   取消安全检测 反射调优
+
+~~~java
+package com.example.demo.kuangstudy.hsp;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+public class Reflect {
+    public static void main(String[] args) throws ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+        //普通调用
+        long start = System.currentTimeMillis();
+        Dog dog = new Dog();
+        for (int i = 0; i < 200000000; i++) {
+            dog.eat();
+        }
+        long end = System.currentTimeMillis();
+        System.out.println("普通时长"+(end-start));
+
+        //反射调用
+        Class<?> cls = Class.forName("com.example.demo.kuangstudy.hsp.Dog");
+        Object o = cls.newInstance();
+        Method eat = cls.getMethod("eat");
+        //eat.setAccessible(true);  //直接通过 取消安全检测 反射调优
+        long start1 = System.currentTimeMillis();
+        for (int i = 0; i < 200000000; i++) {
+            eat.invoke(o);
+        }
+        long end1 = System.currentTimeMillis();
+        System.out.println("反射时长："+(end1-start1));
+    }
+}
+
+class  Dog{
+    public void eat(){
+        
+    }
+}
+ //发现正常调用所需时间最短 其次是关闭安全检测进行反射调用 最后是不关闭进行反射调用
+~~~
+
+
+
+####  反射获取属性（包括私有属性）
+
+创建了一个User类
+
+~~~java
+package com.example.demo.kuangstudy.hsp.reflect;
+
+import lombok.Data;
+
+@Data
+public class User {
+    private String name;
+    private String pwd;
+    private Integer age;
+    private String hobby;
+}
+~~~
+
+
+
+获取属性并打印
+
+~~~java
+package com.example.demo.kuangstudy.hsp.reflect;
+
+public class Field {
+    public static void main(String[] args) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+        Class<?> userClass = Class.forName("com.example.demo.kuangstudy.hsp.reflect.User");
+        
+        Object o = userClass.newInstance();//利用反射来创建对象
+        System.out.println(""+o);
+
+
+        java.lang.reflect.Field[] declaredFields = userClass.getDeclaredFields();
+        for (java.lang.reflect.Field declaredField : declaredFields) {
+            //必须要使用setAccessible爆破 才能获取私有的属性
+            declaredField.setAccessible(true);
+            String key = declaredField.getName();
+
+            Object value = declaredField.get(o);//获取对象o 对应Field的 value值
+            System.out.println(key+" : "+value);
+
+        }
+		//普通创建对象，利用反射获取属性
+        User user = new User();
+        user.setAge(18);
+        user.setHobby("swimming");
+        user.setPwd("123");
+        user.setName("pengyujie");
+
+        java.lang.reflect.Field[] declaredFields1 = user.getClass().getDeclaredFields();
+        for (java.lang.reflect.Field field : declaredFields1) {
+            //必须要使用setAccessible爆破 才能获取私有的属性
+            field.setAccessible(true);
+            String key = field.getName();
+
+            Object value = field.get(user);//获取对象user 对应Field的 value值
+            System.out.println(key+" : "+value);
+        }
+
+    }
+}
+~~~
+
+
+
+结果
+
+~~~java
+User(name=null, pwd=null, age=null, hobby=null)
+name : null
+pwd : null
+age : null
+hobby : null
+name : pengyujie
+pwd : 123
+age : 18
+hobby : swimming
+~~~
+
+
 
 
 
