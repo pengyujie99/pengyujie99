@@ -907,6 +907,65 @@ public class LockCondition {
 
 #### 死锁
 
+>死锁必须要有至少二个线程才会发生 ，也就是需要双方都需要获取对方资源才能进行下一步，双方互不相让，形成了僵持。这就叫死锁
+
+代码举例：
+
+~~~java
+package com.example.demo.kuangstudy.hsp.deadLock;
+
+public class DeadLock extends Thread{
+
+    boolean isFlag;
+    static Object o1 =new Object();//需要使用static保证多线程共享一个对象  不使用的话 每new一个DeadLock对象就会创建一个o1
+    static Object o2 =new Object();
+
+    public DeadLock(boolean Flag){
+        this.isFlag = Flag;
+    }
+
+    @Override
+    public void run() {
+        if (isFlag){
+            synchronized (o1){//代码块锁
+                System.out.println(Thread.currentThread().getName()+"已经获取了o1锁---尝试去获取o2锁");
+                synchronized(o2){
+                    System.out.println("已经获取了o2锁---"+Thread.currentThread().getName()+"执行完毕！！！");
+                }
+            }
+        }else {
+            synchronized (o2){
+                System.out.println(Thread.currentThread().getName()+"已经获取了o2锁---尝试去获取o1锁");
+                synchronized(o1){
+                    System.out.println("已经获取了o1锁---"+Thread.currentThread().getName()+"执行完毕！！！");
+                }
+            }
+        }
+    }
+}
+~~~
+
+启动
+
+~~~java
+package com.example.demo.kuangstudy.hsp.deadLock;
+
+public class DeadLockApplication {
+    public static void main(String[] args) {
+        new Thread(new DeadLock(true),"A线程").start();
+        new Thread(new DeadLock(false),"B线程").start();
+        //AB线程都获取了对方下一步操作需要的锁，对方没有释放自己所需锁前，都无法进行下一步，导致了程序无法往下运行
+        //运行结果如下：
+        //A线程已经获取了o1锁---尝试去获取o2锁
+		//B线程已经获取了o2锁---尝试去获取o1锁
+    }
+}
+~~~
+
+
+
+#### 死锁
+
 ~~~linux
 在terminal中 输入
     jps -l  #查看进程

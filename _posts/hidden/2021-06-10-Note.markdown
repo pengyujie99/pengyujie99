@@ -382,6 +382,8 @@ jstack 进程号	#查看进程所包含的线程 以及信息
 
 就是一致性（Consistency）、可用性（Availability）和分区容错性（Partition）。CAP 理论告诉我们：**在一个分布式系统中，不可能同时满足一致性（Consistency)，可用性（Availability）和分区容错性（Partition tolerance），最多只能同时满足其中的2个**。
 
+CA 一般在单体应用 ，AP 是适合银行等对于一致性要求高的，CP是适合互联网项目，用户体验好。
+
 
 
 
@@ -475,9 +477,13 @@ public class ServiceSocket {
 
 
 
+### 前端：
 
+#### ajax返回信息 不走success走error 
 
+证明可能请求格式不对  比如以application/json格式请求 后端接口是 application/html格式 就会报404错误 请求不到对应接口
 
+解决：需要改请求格式或者接口其中一个即可（可在后端使用注解@ResponseBody   来控制为json格式）
 
 
 

@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      "简单的socket通讯"
-subtitle:   "网络多线程和Socket通讯复习"
+subtitle:   "仿QQ"
 date:       2021-07-30
 author:     "Pengyujie"
 header-img: "img/tag-bg.jpg"
