@@ -347,6 +347,11 @@ Ajax实现 提交修改
 
 
 ```javascript
+if (id==0){
+				method_type="save";
+			}else{
+				method_type="update";
+			}
 var yunyingAgent = {
    id:id,
    phone: phone,
