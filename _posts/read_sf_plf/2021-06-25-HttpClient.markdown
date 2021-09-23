@@ -983,8 +983,7 @@ public class PayPostImpl<K> implements PayPost<K>{
 
         log.info("==========================");
         //log.info("list:"+list.toString());
-        log.info("list1:"+list1.toString());
-        log.info("==========================");
+        log.info("需要签名的参数:"+list1.toString());
 
         //Collections.sort(list1);//如果是字典序 就需要加上这段代码
         String str1=null;
@@ -998,11 +997,11 @@ public class PayPostImpl<K> implements PayPost<K>{
         }
 
 
-        System.out.println(str1);
         String str3="&"+str;
+        log.info("签名前的拼接字符串:"+str3);
         //MD5加密
         String ks = mdTest.encryption(str1+str3);//调用方法生成MD5加密后 赋值给ks（key_sign）
-        System.out.println("ks:"+ks);
+        log.info("签名:"+ks);
 
         //Map<String, Object> map = new HashMap<String, Object>();
 
@@ -1027,7 +1026,6 @@ public class PayPostImpl<K> implements PayPost<K>{
         map1.put("key_sign", ks);
         
         Object o = JSONObject.toJSON(map1);
-        log.info("==========================");
         //log.info("map:"+map.toString());
         log.info("请求参数String格式:"+map1.toString());
         log.info("请求参数JSON格式:"+o);
@@ -1054,7 +1052,7 @@ public interface HcPost {
 
 
 
-实现：
+第一种实现（使用HttpClient）：
 
 ~~~java
 package com.example.demo.barcodepay.service.impl;
@@ -1075,7 +1073,7 @@ public class HcPostImpl implements HcPost {
             CloseableHttpClient httpClient = HttpClients.createDefault();//创建一个httpclicent对象
             HttpPost httpPost = new HttpPost(url);//创建一个httppost对象 url为url
             //StringEntity se = new StringEntity(entity, "UTF-8"); //请求体类型
-            StringEntity s = new StringEntity(o.toString());
+            StringEntity s = new StringEntity(o.toString(), "UTF-8");
             s.setContentEncoding("UTF-8");
             s.setContentType("application/json");//发送json数据需要设置contentType设为application/json
             httpPost.setEntity(s); //httppost对象的Entity设为s
@@ -1093,6 +1091,86 @@ public class HcPostImpl implements HcPost {
         }
         return "";
     }
+}
+~~~
+
+
+
+
+
+第二种实现（使用io流）
+
+~~~java
+package com.example.demo.invoice.service.impl;
+
+import com.example.demo.MD.service.HcPost;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+@Slf4j
+//利用流进行传递的请求参数 和返回参数
+public class HcStreamPostImpl implements HcPost {
+    @Override
+    public String response(String url, Object o) {
+        String request = o.toString();
+        URL url_URL =null;
+        try {
+            url_URL = new URL(url);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        System.out.println("请求参数:" + request);//查看发送请求参数
+        String resp = null;
+        String content_type = null;
+        try {
+            HttpURLConnection connection = (HttpURLConnection) url_URL.openConnection();
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+            connection.setRequestMethod("POST");
+            connection.setUseCaches(false);
+            connection.setInstanceFollowRedirects(true);
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.connect();
+            //传过去的消息
+            try (BufferedOutputStream bos = new BufferedOutputStream(connection.getOutputStream())) {
+                bos.write(request.getBytes("UTF-8"));
+                bos.flush();
+            }
+            //传回来的消息
+            try (InputStreamReader reader = new InputStreamReader(connection.getInputStream(), "UTF-8")) {
+                char[] buf = new char[1024];
+                StringBuffer buffer = new StringBuffer();
+                int count = 0;
+                while ((count = reader.read(buf)) != -1) {
+                    buffer.append(buf, 0, count);
+                }
+                resp = buffer.toString();
+                content_type = connection.getContentType();
+            }
+            connection.disconnect();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            //response = JSONObject.fromObject(resp);
+        }
+        System.out.println("响应类型：" + content_type);
+        System.out.println("响应参数：" + resp);
+        return resp;
+    }
+
 }
 ~~~
 
