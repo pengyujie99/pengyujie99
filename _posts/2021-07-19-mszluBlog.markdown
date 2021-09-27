@@ -4,7 +4,7 @@ title:      "Blog Program"
 subtitle:   "Blog项目的笔记心得"
 date:       2021-07-19 12:00:00
 author:     "Pengyujie"
-header-img: "img/post-bg-rwd.jpg"
+header-img: "img/tag-bg.jpg"
 tags:
     - Java
     - SpringBoot
