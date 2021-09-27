@@ -27,9 +27,9 @@ tags:
 
 在ThreadLocal中是kv保存的，k是弱引用，v是强引用。当内存不足时，弱引用被回收，强引用还在，这时候由于k没了，v就会被永远存在
 
-<img src="../img/notes/Blog/1.jpg" >
+<img src="/img/notes/Blog/1.jpg" >
 
-![ThreadLocal](..\img/notes/Blog/1.jpg)
+![ThreadLocal](/img/notes/Blog/1.jpg)
 
 ```java
 package com.pengyujie.blogapi.utils;
