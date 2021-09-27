@@ -20,7 +20,7 @@ Debug调试的功能主要对应着两组按钮：
 
 　　1、首先说第一组按钮，共8个按钮，从左到右依次如下：
 
-![](D:\Typora\Blog\pengyujie99.github.io\img\notes\debug\1.jpg)
+![](\img\notes\debug\1.jpg)
 
 　　　　> Show Execution Point (Alt + F10)：如果你的光标在其它行或其它页面，点击这个按钮可跳转到当前代码执行的行。
 
@@ -40,7 +40,7 @@ Debug调试的功能主要对应着两组按钮：
 
 　　2、第二组按钮，共7个按钮，从上到下依次如下：
 
-![](D:\Typora\Blog\pengyujie99.github.io\img\notes\debug\2.jpg)
+![](\img\notes\debug\2.jpg)
 
 　　　　> Rerun 'xxxx'：重新运行程序，会关闭服务后重新启动程序。
 
