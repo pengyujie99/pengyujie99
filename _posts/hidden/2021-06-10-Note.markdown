@@ -8,7 +8,7 @@ header-img: "img/tag-bg.jpg"
 hidden: true
 tags:
   - Java
-  - Note
+  - 笔记
 
 ---
 
@@ -201,6 +201,14 @@ GRANT CREATE TABLE TO user_name--授权给用户
 > 能够实现多台机器中线程对共享资源的互斥访问
 
 比如Redis的发布订阅、MySQL中多个线程连接同一个数据库，然后通过行锁实现互斥访问。都可以很好地实现分布式锁。
+
+业内有三种实现方式：
+
+1、基于数据库；
+
+2、基于redis；
+
+3、基于Zookeeper。
 
 
 
@@ -411,6 +419,10 @@ select * from student where student_name = ?
 而使用${}在动态解析时候，会传入参数字符串
 
 select * from student where student_name = 'lyrics'
+
+
+
+
 
 
 #### [强缓存 和 协商缓存 原理](https://www.jianshu.com/p/9c95db596df5)

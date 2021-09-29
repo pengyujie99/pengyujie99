@@ -94,16 +94,16 @@ ok！
 新建一个项目 或者 从gitee clone一个项目
 <br>初始化init
 
-```java
-git init --会生成一个git文件夹
+```shell
+git init ##会生成一个git文件夹
 ```
 <br>过程：
-```java
+```shell
 $ git init
 $ git add .
 $ git status
 $ git commit -m "msg"
-$ git remote add origin [ssh]https://gitee.com/peng-yujie/peng-yujie.git   --这一步开通ssh秘钥，可以直接使用ssh进行连接
+$ git remote add origin [ssh]https://gitee.com/peng-yujie/peng-yujie.git   ##这一步开通ssh秘钥，可以直接使用ssh进行连接
 $ git push -u origin main
 
 $ git remote remove origin --断开连接
@@ -135,14 +135,14 @@ $ git remote remove origin --断开连接
 <br><b>clone一个项目初始化</b>
 <br>git clone url 例如：
 
-~~~git
+~~~shell
 $ git clone https://gitee.com/singmoonshell/kuangshen.git
 ~~~
 
 Git的分支
 
 
-```git
+```shell
 $ git branch newbranch  --新建分支
 $ git branch        --查看分支
 $ git checkout newbranch--切换到newbranch分支
@@ -150,7 +150,7 @@ $ git branch -d newbranch        --删除分支newbranch
 ```
 提取拉取 github/gitee上的数据
 
-~~~git
+~~~shell
 $ git pull origin main #进行拉取数据分支main的数据  可以当做下面二个的结合
 ~~~
 
@@ -163,27 +163,27 @@ $ git pull origin main #进行拉取数据分支main的数据  可以当做下�
 <br>github：C:\Users\19337\Documents\GitHub\pengyujie99.github.io）
 <br>
 
-```java
+```shell
 $ git init
 $ git add .
 $ git commit -m "msg"
-$ git remote add origin [ssh]https://gitee.com/peng-yujie/peng-yujie.git   --这一步开通ssh秘钥，可以直接使用ssh进行连接
+$ git remote add origin [ssh]https://gitee.com/peng-yujie/peng-yujie.git   ##这一步开通ssh秘钥，可以直接使用ssh进行连接
 $ git push -u origin main
 
 $ git remote remove origin --断开连接
 ```
 ## 从零开始拉取提交一个项目到gitee
 <br>1.首先拉取
-```
+```shell
 #拉取远程仓库main分支
 $ git clone -b main https://gitee.com/peng-yujie/peng-yujie.git
 ```
 <br>2.初始化
-```
+```shell
 git init
 ```
 <br>3.提交三步曲
-```
+```shell
 git add .
 git commit -m "message"
 git push origin main
@@ -193,7 +193,7 @@ git push origin main
 
 第一次提交之前必须要做的配置User和配置ssh公钥
 
-```
+```shell
 在git命令行中重新输入命令：
 先输入：$ git config --global user.name “你的名字”
 回车后，
@@ -202,6 +202,17 @@ git push origin main
 ```
 
 
+
+
+
+对自己远程仓库的重命名和查看
+
+~~~shell
+git remote  ## 查看远程仓库
+git remote rename old_name new_name  ## 将仓库名为old_name的 改为new_name
+git remote -v  ## 查看远程仓库包括url
+git remote remove new_name ##删除远程仓库new_name
+~~~
 
 
 

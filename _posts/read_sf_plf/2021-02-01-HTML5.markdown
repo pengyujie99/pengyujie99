@@ -392,6 +392,44 @@ $.ajax({
 
 
 
+<video src="https://player.bilibili.com/player.html" controls autoplay></video>
+
+
+
+
+
+往笔记中插入B站视频
+
+~~~html
+<iframe id="spkj" src="https://player.bilibili.com/player.html?aid=视频AV号&amp;page=1"
+ width="100%" frameborder="no" scrolling="no" allowfullscreen="allowfullscreen">
+<span data-mce-type="bookmark" style="display: inline-block; width: 0px; 
+overflow: hidden; line-height: 0;" class="mce_SELRES_start"></span>
+ </iframe> 
+<script type="text/javascript"> document.getElementById("spkj").style.height=document.getElementById("spkj").scrollWidth*0.76+"px"; </script>
+~~~
+
+
+
+效果如下
+
+<iframe id="spkj" src="https://player.bilibili.com/player.html?aid=视频AV号&amp;page=1"
+ width="100%" frameborder="no" scrolling="no" allowfullscreen="allowfullscreen">
+<span data-mce-type="bookmark" style="display: inline-block; width: 0px; 
+overflow: hidden; line-height: 0;" class="mce_SELRES_start"></span>
+ </iframe> 
+<script type="text/javascript"> document.getElementById("spkj").style.height=document.getElementById("spkj").scrollWidth*0.76+"px"; </script>
+
+
+
+
+
+
+
+
+
+
+
 ##### Ajax请求后端 后端也执行了逻辑 并且返回信息也是对应的 不走success走error 
 
 证明可能请求格式不对  比如以application/json格式请求 后端接口是 application/html格式 就会报404错误 请求不到对应接口
