@@ -392,34 +392,6 @@ $.ajax({
 
 
 
-<video src="https://player.bilibili.com/player.html" controls autoplay></video>
-
-
-
-
-
-往笔记中插入B站视频
-
-~~~html
-<iframe id="spkj" src="https://player.bilibili.com/player.html?aid=视频AV号&amp;page=1"
- width="100%" frameborder="no" scrolling="no" allowfullscreen="allowfullscreen">
-<span data-mce-type="bookmark" style="display: inline-block; width: 0px; 
-overflow: hidden; line-height: 0;" class="mce_SELRES_start"></span>
- </iframe> 
-<script type="text/javascript"> document.getElementById("spkj").style.height=document.getElementById("spkj").scrollWidth*0.76+"px"; </script>
-~~~
-
-
-
-效果如下
-
-<iframe id="spkj" src="https://player.bilibili.com/player.html?aid=视频AV号&amp;page=1"
- width="100%" frameborder="no" scrolling="no" allowfullscreen="allowfullscreen">
-<span data-mce-type="bookmark" style="display: inline-block; width: 0px; 
-overflow: hidden; line-height: 0;" class="mce_SELRES_start"></span>
- </iframe> 
-<script type="text/javascript"> document.getElementById("spkj").style.height=document.getElementById("spkj").scrollWidth*0.76+"px"; </script>
-
 
 
 
