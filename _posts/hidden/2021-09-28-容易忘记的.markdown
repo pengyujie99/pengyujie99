@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      ""
+title:      "记忆"
 subtitle:   "需要记忆的知识"
 date:       2021-09-28
 author:     "Pengyujie"
@@ -8,11 +8,11 @@ header-img: "img/tag-bg.jpg"
 hidden: true
 tags:
   - Java
-  - 
+  - 记忆
   - IDEA
 ---
 
-> 
+> 容易忘记的，需要长记忆（指的我自己哈）
 
 
 
