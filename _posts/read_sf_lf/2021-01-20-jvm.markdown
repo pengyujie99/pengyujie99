@@ -4,7 +4,7 @@ title:      "JVM探究"
 subtitle:   "对JVM的初步认识"
 date:       2021-01-20 12:00:00
 author:     "Pengyujie"
-header-img: "img/post-bg-rwd.jpg"
+header-img: "img/tag-bg.jpg"
 tags:
     - Java
     - JVM 

@@ -4,7 +4,7 @@ title:      "Shell学习"
 subtitle:   "cut sed awk sort"
 date:       2021-05-13
 author:     "Pengyujie"
-header-img: "img/shell.jpg"
+header-img: "img/tag-bg.jpg"
 tags:
     - shell
     - linux
