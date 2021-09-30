@@ -4,7 +4,7 @@ title:      "NOSQL数据库Redis"
 subtitle:   "缓存 穿透、击穿与雪崩"
 date:       2021-4-1 12:00:00
 author:     "Pengyujie"
-header-img: "img/post-bg-alibaba.jpg"
+header-img: "img/tag-bg.jpg"
 tags:
     - Java
     - 中间件

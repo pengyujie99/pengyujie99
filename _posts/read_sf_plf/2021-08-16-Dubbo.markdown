@@ -4,7 +4,7 @@ title:      "Dubbo"
 subtitle:   "Dubbo框架"
 date:       2021-08-16 12:00:00
 author:     "Pengyujie"
-header-img: "img/notes/docker/4.jpg"
+header-img: "img/tag-bg.jpg"
 catalog: true
 tags:
     - Dubbo

@@ -4,7 +4,7 @@ title:      "Docker"
 subtitle:   "Docker容器化技术"
 date:       2021-05-26 12:00:00
 author:     "Pengyujie"
-header-img: "img/notes/docker/4.jpg"
+header-img: "img/tag-bg.jpg"
 catalog: true
 tags:
     - Docker

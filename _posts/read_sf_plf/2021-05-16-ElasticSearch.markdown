@@ -4,7 +4,7 @@ title:      "ElasticSearch"
 subtitle:   "es搜索分析引擎"
 date:       2021-05-16
 author:     "Pengyujie"
-header-img: "img/es.jpg"
+header-img: "img/tag-bg.jpg"
 tags:
     - Java
     - SpringBoot
