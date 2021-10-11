@@ -1,0 +1,58 @@
+---
+layout:     post
+title:      "小BUg库"
+subtitle:   "遇到的一些小问题解决方法"
+date:       2021-05-13
+author:     "Pengyujie"
+header-img: "img/tag-bg.jpg"
+tags:
+    - Bug
+    - linux
+---
+
+>有前端 有后端
+
+
+
+### 前端
+
+
+
+#### ajax返回信息 不走success走error 
+
+证明可能请求格式不对  比如以application/json格式请求后端 后端接口是 application/html格式 就会报404错误 请求不到对应接口
+
+解决：需要改请求格式或者接口其中一个即可（可在后端使用注解@ResponseBody   来控制为json格式）
+
+
+
+
+
+
+
+
+
+
+
+### 后端
+
+
+
+#### FileNotFoundException: xxxxx路径 (拒绝访问）)
+
+![](img src="/img/notes/bug/1.png")
+
+原因： java无权访问文件目录 
+
+解决方法：以管理员方式启动 或者 在IDEA右键 属性->兼容 设置为以管理员方式运行。
+
+
+
+
+
+
+
+[码神之路项目错误笔记][https://pengyujie99.github.io/2021/07/19/mszluBlog/]
+
+
+
