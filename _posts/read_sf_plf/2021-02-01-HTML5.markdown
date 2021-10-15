@@ -15,7 +15,7 @@ tags:
 
 
 
-#### HTML5的使用
+### HTML5的使用
 
 ~~~html
 <!DOCTYPE html>
@@ -223,13 +223,13 @@ td 表示每行的一个数据-->
 
 
 
-#### 关于jQuery的
-
-在做省市区项目时
+### 关于jQuery的
 
 
 
-在后端添加将 provincestdList 传到前端
+#### 在做省市区项目时
+
+在后端添加将 provincestdList 传到前端（也可以在前端 ajax调用异步处理 相对于性能 前端获取更好一点）
 
 ```java
 		Map<String, SuperSearchFilter> map1 = new HashMap<String, SuperSearchFilter>();
@@ -246,6 +246,50 @@ td 表示每行的一个数据-->
 ```
 
 
+
+
+
+在前端ajax调用获取省市区
+
+在资源准备阶段，将数据就传入
+
+~~~javascript
+$(document).ready(function (){
+			provinceSel();
+		})
+~~~
+
+
+
+~~~javascript
+<script>
+		function provinceSel(){
+			//查询   省信息
+			$.ajax({
+				type: "post",
+				url : "${ctx}/provincecitystd/getprovince",
+				contentType: 'application/json',
+				dataType:'json',
+				async:false,
+				success: function(data){
+					$("#merchantprovince").empty();
+					var html = "<option value=\"-1\" id=\"-1\" code=\"-1\">--请选择--</option>";
+					$(data).each(function(index){
+						html += "<option value=\""+data[index].name+"\""+" id=\""+data[index].id+"\""+" code=\""+data[index].code+"\""+">"+data[index].name+"</option>";
+					});
+					$("#merchantprovince").append(html);
+				}
+			});
+	</script>
+~~~
+
+
+
+
+
+
+
+#### 前端的省市区代码
 
 ```html
 <div class="form-group">
@@ -344,8 +388,6 @@ $("#county").attr("code",(countycode==""?"-1":countycode));
 
 Ajax实现 提交修改
 
-
-
 ```javascript
 if (id==0){
     method_type="save";
@@ -392,6 +434,68 @@ $.ajax({
 
 
 
+#### 编写接口
+
+~~~
+/**
+	 * 查询出需要修改的运营经理信息
+	 *
+	 * @param id
+	 * @param model
+	 * @return
+	 * @throws ParseException
+	 */
+	@RequestMapping(value = "UpdateOne")
+	@ResponseBody
+	public YunyingManagerBaseBean UpdateOne(int id, Model model) throws ParseException {
+		YunyingManagerBaseBean updateOneById = yunyingManagerBaseInfoService.findUpdateOneById(id);//根据id查询出 对应的修改信息
+		return updateOneById;
+	}
+~~~
+
+
+
+#### Ajax调用
+
+~~~javascript
+var yunyingmanagerid = id;
+			var name;
+			var email;
+			var contacts;
+			var phone;
+			var province;
+			var city;
+			var county;
+			var provincecode;
+			var citycode;
+			var countycode;
+			var address;
+			var department;
+
+			$.ajax({
+				type: "post",
+				url: "${ctx}/cms/function/yunyingmanager/UpdateOne",
+				dataType: 'json',
+				async:false,
+				data: 'id=' + yunyingmanagerid,
+				success: function (data) {
+					//直接使用.属性 就可以获取对象对应的属性
+					name = data.name;
+					email = data.email;
+					contacts = data.contacts;
+					phone = data.phone;
+					province = data.provinceName;
+					city = data.cityName;
+					county = data.countyName;
+					provincecode = data.provinceCode
+					citycode = data.cityCode;
+					countycode = data.countyCode
+					address = data.address;
+					department =data.department;
+				}
+			});
+
+~~~
 
 
 
@@ -401,6 +505,9 @@ $.ajax({
 
 
 
+
+
+### 遇到的问题
 
 ##### Ajax请求后端 后端也执行了逻辑 并且返回信息也是对应的 不走success走error 
 

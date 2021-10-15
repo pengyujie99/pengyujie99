@@ -1174,3 +1174,22 @@ public class HcStreamPostImpl implements HcPost {
 }
 ~~~
 
+
+
+### 一个对象 输出打印（反射）
+
+~~~
+Class<? extends YunyingManagerBaseBean> aClass = updateOneById.getClass();
+		for (Field field : aClass.getDeclaredFields()) {
+			field.setAccessible(true);
+			String fieldName = field.getName();
+			Object value = null;
+			try {
+				value = field.get(updateOneById);
+				System.out.println(fieldName+":"+value);
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
+~~~
+
