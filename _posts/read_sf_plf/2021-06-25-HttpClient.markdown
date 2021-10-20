@@ -204,7 +204,7 @@ public class SignBeanUtil {
 
 
 
-## 付款码支付 
+## 付款码支付（json格式请求接口）
 
 自己写的一个demo
 
@@ -1176,9 +1176,9 @@ public class HcStreamPostImpl implements HcPost {
 
 
 
-### 一个对象 输出打印（反射）
+## 一个对象 输出打印（反射）
 
-~~~
+~~~java
 Class<? extends YunyingManagerBaseBean> aClass = updateOneById.getClass();
 		for (Field field : aClass.getDeclaredFields()) {
 			field.setAccessible(true);
@@ -1192,4 +1192,123 @@ Class<? extends YunyingManagerBaseBean> aClass = updateOneById.getClass();
 			}
 		}
 ~~~
+
+
+
+
+
+## 使用xml格式去请求接口
+
+工具类
+
+```java
+package com.example.demo.kaifa.honghuoxml;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
+
+public class FyPayUtil {
+
+    /**
+     * 富友支付请求
+     * @param nvp
+     * @param mhid
+     * @throws Exception
+     */
+    public static String pay(String url, String param) throws Exception {
+        StringBuffer sf=new StringBuffer();
+        String text="";
+        CloseableHttpClient httpclient= HttpClients.createDefault(); //构建http请求
+        try {
+            List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+            BasicNameValuePair bnv = new BasicNameValuePair("req", param);
+            formparams.add(bnv);
+            HttpPost httpPost = new HttpPost(url);
+
+            RequestConfig requestConfig = RequestConfig.custom()
+                    .setConnectTimeout(5000)
+                    .setConnectionRequestTimeout(5000).setSocketTimeout(20000)
+                    .build();
+            httpPost.setConfig(requestConfig);
+
+            httpPost.addHeader("charset", "GBK");
+            httpPost.setEntity(new UrlEncodedFormEntity(formparams, "GBK"));
+            CloseableHttpResponse response = httpclient.execute(httpPost);
+
+            try {
+                HttpEntity entity = response.getEntity();
+//                System.out.println("----------------------------------------"+entity);
+//                System.out.println(response.getStatusLine());
+                if (entity != null) {
+//                    System.out.println("Response content length: " + entity.getContentLength());
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(entity.getContent(),"utf-8"));
+                    while ((text=bufferedReader.readLine()) != null) {
+                        sf.append(text);
+                    }
+                }
+                EntityUtils.consume(entity);
+            } finally {
+                response.close();
+            }
+        } finally {
+            httpclient.close();
+        }
+//        System.out.println(URLDecoder.decode(sf.toString(),"GBK"));
+        return  URLDecoder.decode(sf.toString(),"GBK") ;
+    }
+}
+```
+
+
+
+主方法
+
+~~~java
+package com.example.demo.kaifa.honghuoxml;
+
+import com.example.demo.kaifa.honghuo.bean.HongHuoBean;
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
+@Slf4j
+public class Main {
+    public static void main(String[] args) throws Exception {
+        HongHuoBean hongHuoBean = new HongHuoBean();//这是一个对象 
+        hongHuoBean.setTrace_no("123456");
+        hongHuoBean.setIns_cd("123456");
+        hongHuoBean.setMchnt_cd("816307011000007");
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("<?xml version=\"1.0\" encoding=\"GBK\" standalone=\"yes\"?>");
+        sb.append("<xml>");
+        sb.append("<trace_no>"+hongHuoBean.getTrace_no()+"</trace_no>");
+        sb.append("<ins_cd>"+hongHuoBean.getIns_cd()+"</ins_cd>");
+        sb.append("<mchnt_cd>"+hongHuoBean.getMchnt_cd()+"</mchnt_cd>");
+        sb.append("<sign>"+hongHuoBean.getSign()+"</sign>");
+        sb.append("</xml>");
+
+        String rexml= FyPayUtil.pay("http://www-1.fuiou.com:28090/wmp/mchntOpen.fuiou?action=unionPayPnrReport", URLEncoder.encode(sb.toString(), "GBK"));
+        log.info("返回信息："+rexml);
+    }
+
+}
+~~~
+
+
 
