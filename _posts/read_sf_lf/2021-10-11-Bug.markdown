@@ -67,7 +67,7 @@ tags:
 
 ### 后端
 
-#### FileNotFoundException: xxxxx路径 (拒绝访问）)
+- FileNotFoundException: xxxxx路径 (拒绝访问）)
 
 ![](img src="/img/notes/bug/1.png")
 
@@ -77,7 +77,7 @@ tags:
 
 
 
-#### idea里从svn中检出工程报错.java:1: 非法字符： \65279
+- idea里从svn中检出工程报错.java:1: 非法字符： \65279
 
   首先导下来的默认是UTF-8，编译时报非法字符的错误；
 
@@ -92,6 +92,75 @@ tags:
   总结：在UTF-8和GBK之间反复横跳。
 
 
+
+- 今天做码神之路的blog项目，然后springboot一直报错
+
+> Invalid bound statement (not found): com.pengyujie.blogapi.dao.mapper.TagMapper.findHotsTagIds
+
+搞了几个小时，检查关联代码完全没有问题。发现是创建xml文件时候，前面的包都合并成了一个包使用 . 连接。
+
+解决：
+
+将每个文件夹分开（如下），再次执行 成功。很简单的错误，却搞了几个小时。
+
+<img src="/img/notes/Blog/4.png">
+
+
+
+
+
+- 报错：Cause: com.mysql.cj.jdbc.exceptions.MysqlDataTruncation: Data truncation: Out of range value for column 'article_id' at row 1
+
+<img src="/img/notes/Blog/5.png">
+
+超出界限   原因一般是二种：一种是值为-1，一种值过大。
+
+我的是第二种，给的值过大，在数据库中将article_id的int类型转换为bigint
+
+
+
+- 还有一种因为精度丢失的错误，将int转换为String类型解决成功。
+
+
+
+- 不小心将springboot项目变为了普通项目，复原
+
+src变为springboot项目
+
+<img src="/img/notes/Blog/6.png">
+
+
+
+pom变为springboot的pom
+
+<img src="/img/notes/Blog/7.jpg">
+
+
+
+- 空指针异常
+
+造成原因
+
+1、空数据equals   
+
+~~~java
+        String s =null;
+        System.out.println(s.equals("nishi1"));
+        //System.out.println("nishi".equals(s));//将常量放在前面，就不会出现空指针异常
+~~~
+
+2、toString（）方法
+
+如果数据为空，使用toString（）方法就会造成空指针，可以使用String.valueOf
+
+
+
+
+
+- 注解@Transactional失效
+
+1、由于调用本类方法，比如 一个类的a方法，调用这个类的b方法，属于本类调用，不会生效， **只有当事务方法被当前类以外的代码调用时，才会由Spring生成的代理对象来管理。**
+2、注解修饰在非public的方法上。**虽然事务无效，但不会有任何报错，这是我们很容犯错的一点。**
 
 
 

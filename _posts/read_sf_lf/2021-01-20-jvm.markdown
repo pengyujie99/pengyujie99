@@ -1,13 +1,13 @@
 ---
 layout:     post
-title:      "JVM探究"
-subtitle:   "对JVM的初步认识"
-date:       2021-01-20 12:00:00
+title:      "JVM"
+subtitle:   "JVM初步探究"
+date:       2021-03-16 12:00:00
 author:     "Pengyujie"
 header-img: "img/tag-bg.jpg"
 tags:
+    - JVM
     - Java
-    - JVM 
 ---
 >对JVM的初步认识。
 

@@ -217,6 +217,42 @@ ACID（原子性 一致性 隔离性 持久性）
 
 
 
+建表
+
+~~~mysql
+CREATE TABLE `b_fumin_account_detail` (
+	`id` INT ( 11 ) NOT NULL AUTO_INCREMENT COMMENT '富民账务明细查询接口信息表id',
+	`merchant_id` VARCHAR ( 32 ) NOT NULL COMMENT '商户id',
+	`merchant_no` VARCHAR ( 32 ) NOT NULL COMMENT '商户号',
+	`trade_no` VARCHAR ( 32 ) UNIQUE COMMENT '交易流水号',
+	`amount` VARCHAR ( 15 ) DEFAULT '0' NULL COMMENT '交易金额',
+	`sub_trade_type` TINYINT ( 4 ) COMMENT '交易类型  1.充值，3.提现，13.购买理财，14.赎回理财，20 富多利购买 21富多利支取 ',
+	`trade_status` TINYINT ( 4 ) COMMENT '交易状态  0处理中 1成功 2失败 3拒绝 4取消',
+	`product_code` VARCHAR ( 32 ) NOT NULL COMMENT '产品编码',
+	`payment_msg` VARCHAR ( 32 ) DEFAULT NULL COMMENT '交易失败描述',
+	`trade_remark` VARCHAR ( 80 ) DEFAULT NULL COMMENT '交易备注',
+	`name_in` VARCHAR ( 16 ) DEFAULT NULL COMMENT '入账方姓名',
+	`account_in` VARCHAR ( 32 ) DEFAULT NULL COMMENT '入账方账号',
+	`name_out` VARCHAR ( 16 ) DEFAULT NULL COMMENT '出账方姓名',
+	`createoperator` VARCHAR ( 30 ) NOT NULL DEFAULT '' COMMENT '操作人员名称',
+	`createoperator_id` TINYINT ( 4 ) NOT NULL DEFAULT '' COMMENT '操作人员名称',
+	`account_out` VARCHAR ( 32 ) NOT NULL COMMENT '出账方账号',
+	`payment_method` VARCHAR ( 4 ) DEFAULT '' COMMENT '支付方式',
+	`card_type` VARCHAR ( 4 ) DEFAULT NULL COMMENT '卡类型',
+	`bank_name` VARCHAR ( 20 ) DEFAULT '' COMMENT '银行名称',
+	`bank_code` VARCHAR ( 20 ) DEFAULT '' COMMENT '银行简称',
+	`create_time` datetime DEFAULT '' COMMENT '交易创建时间',
+	`finish_time` datetime DEFAULT '' COMMENT '交易完成时间',
+	`createtime` datetime NOT NULL COMMENT '创建时间：yyyy-MM-dd HH:mm:ss',
+	`updatetime` datetime NOT NULL COMMENT '更新时间：yyyy-MM-dd HH:mm:ss',
+	PRIMARY KEY ( `id` ),
+	UNIQUE KEY `trade_no` ( `trade_no` ) USING BTREE,
+	KEY `merchant_id` ( `merchant_id` ) USING BTREE,
+	KEY `merchant_no` ( `merchant_no` ) USING BTREE,
+KEY `product_code` ( `product_code` ) USING BTREE 
+) ENGINE = INNODB DEFAULT CHARSET = utf8mb4 COMMENT = '富民账务明细表';
+~~~
+
 
 
 
