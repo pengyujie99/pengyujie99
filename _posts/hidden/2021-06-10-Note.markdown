@@ -484,9 +484,9 @@ select * from student where student_name = 'lyrics'
         SysUser sysUser = new SysUser();
         sysUser.setNickname("BBBB");
         sysUser.setAvatar("BBBB");
+        this.sysUserMapper.insert(sysUser);
         String str = null;
         str.toString();//空指针
-        this.sysUserMapper.insert(sysUser);
 
         SysUser sysUser1 = new SysUser();
         sysUser1.setNickname("CCCC");
