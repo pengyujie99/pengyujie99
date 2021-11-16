@@ -1,7 +1,7 @@
 ---
 layout:     post
-title:      "Note"
-subtitle:   "笔记"
+title:      "问题"
+subtitle:   "Java问题集合"
 date:       2021-06-10
 author:     "Pengyujie"
 header-img: "img/tag-bg.jpg"
@@ -429,6 +429,75 @@ select * from student where student_name = ?
 select * from student where student_name = 'lyrics'
 
 
+
+
+
+#### 关于事务注解失效的问题
+
+这里只写经常发生的情况（还有其他可能失效的没有写出）
+
+-  Transactional注解标注方法修饰符为非public时
+- 事务方法内部捕捉了异常，没有抛出新的异常
+- 在类内部调用调用类内部@Transactional标注的方法
+
+对于在类内部调用调用类内部@Transactional标注的方法，示例代码如下
+
+~~~java
+@Override
+    public CommonResult createUser(UserDto userDto) {
+        //类内部调用@Transactional标注的方法。
+        insert(userDto);
+        return CommonResult.builder().code(ResponseCode.SUCCESS.getCode()).message(ResponseCode.SUCCESS.getMessage()).build();
+    }
+    @Transactional
+    public void insert(UserDto userDto) {
+        User user = new User();
+       BeanUtils.copyProperties(userDto,user);
+        //正常public修饰符的事务方法
+        userMapper.insert(user);
+        int a = 1;
+        if (a > 0) {
+            throw new ApplicationException("-1", "新增失败", null);
+        }
+    }
+~~~
+
+注意：这里 是本类的createUser方法调用了本类的insert方法，使**本类的insert方法的事务注解没有生效**，如果此时在createUser上加上@Transactional注解，那么整个createUser方法也是有事务的。
+
+
+
+举个简单的例子
+
+~~~java
+	@Override
+    //@Transactional
+    public void a() {
+        SysUser sysUser = new SysUser();
+        sysUser.setNickname("AAAA");
+        sysUser.setAvatar("AAAA");
+        this.sysUserMapper.insert(sysUser);
+        b();
+    }
+    @Override
+    @Transactional
+    public void b(){
+        SysUser sysUser = new SysUser();
+        sysUser.setNickname("BBBB");
+        sysUser.setAvatar("BBBB");
+        String str = null;
+        str.toString();//空指针
+        this.sysUserMapper.insert(sysUser);
+
+        SysUser sysUser1 = new SysUser();
+        sysUser1.setNickname("CCCC");
+        sysUser1.setAvatar("CCCC");
+        this.sysUserMapper.insert(sysUser1);
+    }
+~~~
+
+如果我们直接执行a()方法，数据库中就会**插入了A和B的数据，C并没有插入**(因为b方法的事务失效了)。
+
+此时清空数据库，然后我们在a()方法加上事务注解，再调用a()方法，就会发现数据库中，**一条数据都没有插入**(因为a方法的事务生效了)
 
 
 

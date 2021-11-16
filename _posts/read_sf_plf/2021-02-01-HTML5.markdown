@@ -48,8 +48,9 @@ required 必须要提交
 action  表单提交的位置 可以是一个网站 也可以是一个请求处理的地址
 method 提交方式 post get-->
 <form action="jspay.html" method="post" name="form">
-    <p>昵称：<input type="text" placeholder="请输入昵称" required></p>
-    <p>密码：<input type="password" placeholder="请输入密码" required>
+    <!-- label for  实现点击文字也可以跳到输入框-->
+     <p><label for="name">昵称：</label><input id="name" type="text" placeholder="请输入昵称" required></p>
+    <p><label for="pwd">密码：</label><input id="pwd" type="password" placeholder="请输入密码" required>
 
     <!--文本框和单选框
     checked 默认选中
