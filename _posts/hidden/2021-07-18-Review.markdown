@@ -1383,7 +1383,7 @@ public static Map<String, Object> objectToMap(Object obj) throws IllegalAccessEx
     for (Field field : clazz.getDeclaredFields()) {
         field.setAccessible(true);
         String fieldName = field.getName();
-        Object value = StringUtils.nvl(field.get(obj));
+        Object value = field.get(obj);
         map.put(fieldName, value);
     }
     return map;

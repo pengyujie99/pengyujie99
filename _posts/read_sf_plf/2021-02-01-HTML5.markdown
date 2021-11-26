@@ -1,7 +1,7 @@
 ---
+layout: post
 title: "HTML5"
 subtitle: "了解前端HTML5的使用"
-layout: post
 date:   2021-02-01 12:00:00
 author: "Pengyujie"
 header-img: "img/tag-bg.jpg"
@@ -224,7 +224,133 @@ td 表示每行的一个数据-->
 
 
 
-### 关于jQuery的
+### 关于jQuery
+
+
+
+浏览器加载模式，是单线程加载，按照顺序往下加载 。
+
+首先加载html（如果是图片，音频，视频等资源时会异步加载不会影响主线程），
+
+然后是css，最后是js（如果是那种需要导入的js文件或者css文件则是在最开始的预加载就会导入不会影响主线程）。
+
+
+
+Js类的方法的调用和数组的遍历（each的使用）
+
+~~~javascript
+<script type="text/javascript">
+
+    //创建一个类  静态方法和实例方法的调用
+    function AClass(){
+    }
+
+    AClass.static_01 = function (){
+        alert("static");
+    }
+    AClass.static_01();
+
+
+    AClass.prototype.instance_01 = function (){
+        alert("instance");
+    }
+    var a = new AClass();
+    a.instance_01();
+
+
+    //each方法 遍历数组 遍历伪数组
+    var arr = ['a','2','c','d','e'];//数组
+    var arr_01 = {'a':2,'b':'aaaa','c':'bbbb'};
+
+    $.each(arr,function (index,value){//index在前 value在后
+        //console.log(index);
+        console.log(value);
+    })
+
+    $.each(arr_01,function (index,value){//index在前 value在后
+        console.log(index);
+        console.log(value);
+    })
+
+</script>
+~~~
+
+
+
+
+
+一些简单的方法（还有isFunction()等等）
+
+```javascript
+//去掉二端的空格 $.trim(str_01);
+var str_01 = "      hello world       ";
+var trim = $.trim(str_01);
+console.log(trim);
+
+//判断是否为数组 $.isArray(arr);
+var arr = ['a','2','c','d','e'];//数组
+var arr_01 = {'a':2,'b':'aaaa','c':'bbbb'};
+var isarr = $.isArray(arr);
+console.log(isarr);
+
+console.log($.type(arr));
+console.log($.type(arr_01));
+
+
+```
+
+
+
+控制ready方法 执行
+
+```javascript
+//先让ready 不执行 $.holdReady(true);    让ready开始执行  $.holdReady(false);
+$.holdReady(true);
+$(document).ready(function (){
+    alert("执行了ready");
+})
+
+function startReady(){
+    $.holdReady(false);
+}
+```
+
+
+
+内容选择器
+
+```javascript
+//内容选择器
+//有你好这个文本内容的
+var b = $("div:contains('你好')");
+console.log(b);
+
+//没有文本也没有子元素的
+var em = $("div:empty");
+console.log(em);
+
+//有子元素是span的
+var son = $("div:has('span')");
+console.log(son);
+```
+
+
+
+操作属性（attr和prop）
+
+```javascript
+$("span").attr("name");//获取属性节点(只能获取第一个满足要求的值)
+$("div").attr("class","box");//设置属性节点(对所有的div中的class属性值赋值为 box)
+$("div").removeAttr("class name");//把div的class 和 name 属性删除
+
+//注意 prop使用和attr使用相同  但是当获取 true false的值的时候 官方推荐使用prop，因为如果还使用attr可能是undefined
+```
+
+
+
+
+
+
 
 
 
