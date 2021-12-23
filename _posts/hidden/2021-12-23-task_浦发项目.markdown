@@ -1,3 +1,21 @@
+---
+layout:     post
+title:      "项目"
+subtitle:   " 浦发上送项目回顾"
+date:       2021-12-13
+author:     "Pengyujie"
+header-img: "img/tag-bg.jpg"
+hidden: true
+tags:
+  - Java
+  - 项目
+
+---
+
+> 定时任务task  浦发上送项目
+
+
+
 ### 浦发项目
 
 需求：需要给浦发银行，上送我们对应的商户信息，只需要上送一个压缩文件（压缩文件包含 商户信息文件、商户昨日交易文件、商户资金结算文件），一个空信号文件（空文件最后.finish命名即可）。
