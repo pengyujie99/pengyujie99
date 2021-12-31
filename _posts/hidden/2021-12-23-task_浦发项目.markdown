@@ -229,7 +229,7 @@ public class PufaReceiptUtil {
             if (detailSynBean==null || detailSynBean.size()<1){
                 return;
             }
-            BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f, true),"GBK"));
             for (MerchantInfoSynBean bean : detailSynBean) {
                 StringBuffer content = new StringBuffer();
                 content.append(bean.getMerchantno());//内部商户号
@@ -359,7 +359,7 @@ public class PufaReceiptUtil {
             if (merchants==null || merchants.size()<1){
                 return;
             }
-            BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f, true),"GBK"));
 
             for (MerchantInfoSynOtherBean merchant : merchants) {
                 int pageSize = 50000;//查询大小
@@ -488,7 +488,7 @@ public class PufaReceiptUtil {
             if (merchants==null || merchants.size()<1){
                 return;
             }
-            BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f, true),"GBK"));
             for (MerchantInfoSynOtherBean merchant : merchants) {
                 List<FundSettlementSynBean> detailSynBean = merchantService.findSettlementSynBean(yesterday,merchant.getMerchantid());
                 if (detailSynBean == null || detailSynBean.size() < 1) {

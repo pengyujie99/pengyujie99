@@ -164,6 +164,41 @@ pom变为springboot的pom
 
 
 
+- 利用迭代器去取map的kv时，遇到的问题
+
+每一次调用`it.next()`方法it就已经是下一个元素了所以只需要调用一次。
+
+错误的写法
+
+```
+Set<Map.Entry<String, Object>> entries = map.entrySet();
+        Iterator<Map.Entry<String, Object>> it = entries.iterator();
+        int flag = 0;
+        while(it.hasNext()){
+            result = result+it.next().getKey() + "=" + it.next().getValue();
+        }
+```
+
+
+
+正确的写法
+
+~~~
+Set<Map.Entry<String, Object>> entries = map.entrySet();
+        Iterator<Map.Entry<String, Object>> it = entries.iterator();
+        int flag = 0;
+        while(it.hasNext()){
+            Map.Entry<String, Object> next = it.next();
+            result = result+next.getKey() + "=" + next.getValue();
+        }
+~~~
+
+
+
+
+
+
+
 
 
 [码神之路项目错误笔记][https://pengyujie99.github.io/2021/07/19/mszluBlog/]
