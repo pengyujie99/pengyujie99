@@ -1235,3 +1235,362 @@ Impl类
 
 
 
+
+
+#### 优化方案
+
+由于 使用表查询当表数据过多时过于缓慢，这里将其改为ots查询
+
+
+
+在工具类中
+
+~~~java
+List<SpdbTradeDetailSynBean> detailSynBean = tradeSerialService.findDetailSynBean(yesterday, merchant.getMerchantid(), id, pageSize);
+~~~
+
+改为
+
+~~~java
+					//ots查询商户交易明细信息
+                    byte[] nextToken = null;
+                    SpdbTradeBean spdbTradeBymerchantid = null;
+                    try {
+                        spdbTradeBymerchantid = SpdbTableStoreUtil.findSpdbTradeBymerchantid(yesterday, merchant.getMerchantid(), nextToken);
+                    } catch (Exception e) {
+                        logger.error("ots查询商户交易明细信息异常,商户id："+merchant.getMerchantid(),e);
+                    }
+                    if (spdbTradeBymerchantid==null){
+                        continue;
+                    }
+                    List<SpdbTradeDetailSynBean> detailSynBean = spdbTradeBymerchantid.getSpdbTradeDetailSynBeanList();
+~~~
+
+
+
+~~~java
+List<SpdbFundSettlementSynBean> detailSynBean = tradeSerialService.findSettlementSynBean(yesterday,merchant.getMerchantid());
+~~~
+
+改为
+
+~~~java
+				//ots查询商户资金结算信息
+                byte[] nextToken = null;
+                SpdbFundSettlementBean spdbFundSettlement = null;
+                try {
+                    spdbFundSettlement = SpdbTableStoreUtil.findSpdbFundSettlementBymerchantid(yesterday, merchant.getMerchantid(), nextToken);
+                } catch (Exception e) {
+                    logger.error("ots查询商户资金结算信息异常,商户id："+merchant.getMerchantid(),e);
+                }
+                if (spdbFundSettlement==null){
+                    continue;
+                }
+                List<SpdbFundSettlementSynBean> detailSynBean = spdbFundSettlement.getSpdbFundSettlementSynBeanList();
+~~~
+
+
+
+##### 编写SpdbTableStoreUtil类
+
+~~~java
+package com.lichu.common.util;
+
+import com.alicloud.openservices.tablestore.model.Row;
+import com.alicloud.openservices.tablestore.model.search.SearchQuery;
+import com.alicloud.openservices.tablestore.model.search.SearchRequest;
+import com.alicloud.openservices.tablestore.model.search.SearchResponse;
+import com.alicloud.openservices.tablestore.model.search.query.BoolQuery;
+import com.alicloud.openservices.tablestore.model.search.query.QueryBuilders;
+import com.lichu.common.bean.SpdbFundSettlementBean;
+import com.lichu.common.bean.SpdbFundSettlementSynBean;
+import com.lichu.common.bean.SpdbTradeBean;
+import com.lichu.common.bean.SpdbTradeDetailSynBean;
+import com.lichu.common.enums.OTSTableEnum;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * 浦发银行OTS查询上送数据工具类
+ *
+ */
+public class SpdbTableStoreUtil extends TableStoreUtil{
+    private static final Logger log = Logger.getLogger(SpdbTableStoreUtil.class);
+
+
+    /**
+     * 根据日期和商户id查询浦发银行交易明细数据
+     * @param yesterday
+     * @param merchantid
+     * @return
+     */
+    public static SpdbTradeBean findSpdbTradeBymerchantid(String yesterday, String merchantid, byte[] nextToken) throws Exception {
+
+        SpdbTradeBean spdbTradeBean = new SpdbTradeBean();
+        List<SpdbTradeDetailSynBean> spdbTradeDetailSynBeanList = new ArrayList<>();
+
+        String tableName = OTSTableEnum.TradeSerial.getTableName();
+        String indexName = OTSTableEnum.TradeSerial.getTableIndexName();
+
+        String begintime = yesterday + " 00:00:00";
+        String endtime = yesterday + " 23:59:59";
+
+        BoolQuery.Builder boolQuery = QueryBuilders.bool()
+                .must(QueryBuilders.range("settle_time")
+                        .greaterThanOrEqual(DateUtils.getTimeInUs(begintime, "yyyy-MM-dd HH:mm:ss"))
+                        .lessThanOrEqual(DateUtils.getTimeInUs(endtime, "yyyy-MM-dd HH:mm:ss")));
+
+
+        if (merchantid!=null) {
+            boolQuery.must(QueryBuilders.term("merchantid", merchantid));//商户id
+        }else{
+            boolQuery.must(QueryBuilders.term("merchantid", "0"));//商户id
+        }
+
+        long startTime = DateUtils.getNow();
+
+        SearchQuery searchQuery = SearchQuery.newBuilder()
+                .query(boolQuery)
+                .limit(1000)
+                .build();
+        searchQuery.setGetTotalCount(false);
+        if (nextToken != null) {
+            searchQuery.setToken(nextToken);
+        }
+
+        // 设置需要返回的字段
+        List<String> columnList = Arrays.asList("createdate", "createtime", "settle_date", "merchant_no", "uni_merchant_no", "terminal_id", //交易日期 交易时间 清算日期 商户号 银联商户号 终端号
+                "type", "uni_card_no", "total_fee", "refund_fee", "balance", "terminal_trace", "channel_trade_no", "order_body", //支付方式 卡号 交易金额 退款金额 清算金额 终端流水号 第三方订单号 订单描述
+                 "pay_mode", "card_type", "pay_status_code", "out_refund_no");// 支付类型 银行卡类型 支付状态 退款单号 主键：订单号
+
+        SearchRequest searchRequest = SearchRequest.newBuilder()
+                .tableName(tableName)
+                .indexName(indexName)
+                .addColumnsToGet(columnList)
+                .searchQuery(searchQuery)
+                .build();
+
+        SearchResponse response = InitClient().search(searchRequest);
+
+        List<Row> rows = response.getRows();
+        if (rows == null || rows.size() < 1) {
+            return spdbTradeBean;
+        }
+
+        for (Row row : rows) {
+            SpdbTradeDetailSynBean baseBean = new SpdbTradeDetailSynBean();
+            String createdate = DateUtils.dayToString(new Date(row.getLatestColumn("createdate").getValue().asLong()/1000));
+            String createtime = DateUtils.dateToString(new Date(row.getLatestColumn("createtime").getValue().asLong()/1000));
+            String settle_date = DateUtils.dayToString(new Date(row.getLatestColumn("settle_date").getValue().asLong()/1000));
+            String merchant_no = row.getLatestColumn("merchant_no")!=null?row.getLatestColumn("merchant_no").getValue().asString():"";
+            String uni_merchant_no = row.getLatestColumn("uni_merchant_no")!=null?row.getLatestColumn("uni_merchant_no").getValue().asString():"";
+            String terminal_id = row.getLatestColumn("terminal_id")!=null?row.getLatestColumn("terminal_id").getValue().asString():"";
+
+            Long type = row.getLatestColumn("type")!=null?row.getLatestColumn("type").getValue().asLong():0;
+            String uni_card_no = row.getLatestColumn("uni_card_no")!=null?row.getLatestColumn("uni_card_no").getValue().asString():"";
+            Long total_fee = row.getLatestColumn("total_fee")!=null?row.getLatestColumn("total_fee").getValue().asLong():0;
+            Long refund_fee = row.getLatestColumn("refund_fee")!=null?row.getLatestColumn("refund_fee").getValue().asLong():0;
+            Long balance = row.getLatestColumn("balance")!=null?row.getLatestColumn("balance").getValue().asLong():0;
+            String terminal_trace = row.getLatestColumn("terminal_trace")!=null?row.getLatestColumn("terminal_trace").getValue().asString():"";
+            String channel_trade_no = row.getLatestColumn("channel_trade_no")!=null?row.getLatestColumn("channel_trade_no").getValue().asString():"";
+            String order_body = row.getLatestColumn("order_body")!=null?row.getLatestColumn("order_body").getValue().asString():"";
+
+            String out_trade_no = row.getPrimaryKey().getPrimaryKeyColumn("out_trade_no")!=null?row.getPrimaryKey().getPrimaryKeyColumn("out_trade_no").getValue().toString():"";
+            Long pay_mode = row.getLatestColumn("pay_mode")!=null?row.getLatestColumn("pay_mode").getValue().asLong():0;
+            Long card_type = row.getLatestColumn("card_type")!=null?row.getLatestColumn("card_type").getValue().asLong():0;
+            Long pay_status_code = row.getLatestColumn("pay_status_code")!=null?row.getLatestColumn("pay_status_code").getValue().asLong():0;
+            String out_refund_no = row.getLatestColumn("out_refund_no")!=null?row.getLatestColumn("out_refund_no").getValue().asString():"";
+
+            //对应的信息
+            //Row1
+            String trade_date =createdate!=null?createdate:"";
+            if (!StringUtils.equals(trade_date,"")){
+                trade_date = trade_date.replaceAll("-","");
+            }
+            baseBean.setTrade_date(trade_date);
+
+            String trade_time = createtime!=null?createtime:"";
+            if (!StringUtils.equals(trade_time,"")){
+//                trade_time = trade_time.substring(8, 13);
+                trade_time = trade_time.substring(11, 19).replaceAll(":","");
+            }
+            baseBean.setTrade_time(trade_time);
+
+            String settlement_date = settle_date!=null?settle_date:"";
+            if (!StringUtils.equals(settlement_date,"")){
+                settlement_date = settlement_date.replaceAll("-","");
+            }
+            baseBean.setSettlement_date(settlement_date);
+
+            baseBean.setMerchantno(merchant_no!=null?merchant_no:"");
+            baseBean.setMerchantno_uni(uni_merchant_no!=null?uni_merchant_no:"");
+            baseBean.setTerminal_id(terminal_id!=null?terminal_id:"");
+            //Row2
+            baseBean.setPay_type(type.toString());
+            baseBean.setTrade_cardnum(uni_card_no!=null?uni_card_no:"");
+            String str_total_fee = total_fee.toString();
+            if (!StringUtils.equals(str_total_fee,"0")){
+                str_total_fee =NumberUtil.div(str_total_fee,"100",2);
+            }
+            baseBean.setTotal_fee(str_total_fee);
+
+            String str_refund_fee = refund_fee.toString();
+            if (!StringUtils.equals(str_refund_fee,"0")){
+                str_refund_fee = NumberUtil.div(str_refund_fee,"100",2);
+            }
+            baseBean.setRefund_fee(str_refund_fee);
+
+            String str_balance =  balance.toString();
+            if (!StringUtils.equals(str_balance,"0")){
+                str_balance = NumberUtil.div(str_balance,"100",2);
+            }
+            baseBean.setBalance(str_balance);
+
+            baseBean.setTerminal_trace_no(terminal_trace!=null?terminal_trace:"");
+            baseBean.setChannel_trade_no(channel_trade_no!=null?channel_trade_no:"");
+            baseBean.setRemarks(order_body!=null?order_body:"");
+            //ROW3
+            baseBean.setOut_trade_no(out_trade_no!=null?out_trade_no:"");
+            baseBean.setPay_mode(pay_mode.toString());
+            baseBean.setCard_type(card_type.toString());
+            baseBean.setTrade_type(pay_status_code.toString());
+            baseBean.setOut_refund_no(out_refund_no!=null?out_refund_no:"");
+            spdbTradeDetailSynBeanList.add(baseBean);
+        }
+
+        spdbTradeBean.setNextToken(response.getNextToken());
+        spdbTradeBean.setSpdbTradeDetailSynBeanList(spdbTradeDetailSynBeanList);
+        log.info("浦发银行交易明细数据查询完成,耗时:" + (DateUtils.getNow() - startTime));
+        return spdbTradeBean;
+
+    }
+
+    /**
+     * 根据日期和商户id查询浦发银行资金结算数据
+     * @param yesterday
+     * @param merchantid
+     * @return
+     */
+    public static SpdbFundSettlementBean findSpdbFundSettlementBymerchantid(String yesterday, String merchantid, byte[] nextToken) throws Exception {
+
+        SpdbFundSettlementBean spdbFundSettlementBean = new SpdbFundSettlementBean();
+        List<SpdbFundSettlementSynBean> spdbFundSettlementSynBeanList = new ArrayList<>();
+
+        String tableName = OTSTableEnum.MerchantDay.getTableName();
+        String indexName = OTSTableEnum.MerchantDay.getTableIndexName();
+
+
+        BoolQuery.Builder boolQuery = QueryBuilders.bool()
+                .must(QueryBuilders.range("tradedate")
+                        .greaterThanOrEqual(String.valueOf(DateUtils.stringToDate(yesterday).getTime()))
+                        .lessThanOrEqual(String.valueOf(DateUtils.stringToDate(yesterday).getTime())));
+
+
+        if (merchantid!=null) {
+            boolQuery.must(QueryBuilders.term("merchantid", merchantid));//商户id
+        }else{
+            boolQuery.must(QueryBuilders.term("merchantid", "0"));//商户id
+        }
+
+        long startTime = DateUtils.getNow();
+
+        SearchQuery searchQuery = SearchQuery.newBuilder()
+                .query(boolQuery)
+                .limit(1000)
+                .build();
+        searchQuery.setGetTotalCount(false);
+        if (nextToken != null) {
+            searchQuery.setToken(nextToken);
+        }
+
+        // 设置需要返回的字段
+        List<String> columnList = Arrays.asList("createtime", "merchantno", "total_balance", "total_fee");
+
+        SearchRequest searchRequest = SearchRequest.newBuilder()
+                .tableName(tableName)
+                .indexName(indexName)
+                .addColumnsToGet(columnList)
+                .searchQuery(searchQuery)
+                .build();
+
+        SearchResponse response = InitClient().search(searchRequest);
+
+        List<Row> rows = response.getRows();
+        if (rows == null || rows.size() < 1) {
+            return spdbFundSettlementBean;
+        }
+
+        for (Row row : rows) {
+            SpdbFundSettlementSynBean baseBean = new SpdbFundSettlementSynBean();
+            String createtimes = DateUtils.dateToString(new Date(row.getLatestColumn("createtime").getValue().asLong()/1000));
+            String merchantno = row.getLatestColumn("merchantno")!=null?row.getLatestColumn("merchantno").getValue().asString():"";
+            Long total_balance = row.getLatestColumn("total_balance")!=null?row.getLatestColumn("total_balance").getValue().asLong():0;
+            Long total_fee = row.getLatestColumn("total_fee")!=null?row.getLatestColumn("total_fee").getValue().asLong():0;
+            //对应的信息
+            String createtime = "";
+            String createdate = "";
+            if (!StringUtils.equals(createtimes,"")){
+                createdate = createtimes.substring(0, 10).replaceAll("-","");
+                createtime = createtimes.substring(11, 19).replaceAll(":","");
+            }
+            //入账日期  入账时间   商户号    交易金额  清算金额  应收商户手续费
+            baseBean.setCredit_date(createdate);
+            baseBean.setCredit_time(createtime);
+            baseBean.setMerchantno(merchantno!=null?merchantno:"");
+
+            String Total_balance = total_balance.toString();
+            if (!StringUtils.equals(Total_balance,"0")){
+                Total_balance = NumberUtil.div(Total_balance,"100",2);
+            }
+            baseBean.setTotal_balance(Total_balance);
+
+
+            String settlement_amount;
+            settlement_amount = NumberUtil.sub(total_balance.toString(),total_fee.toString());
+            if (!StringUtils.equals(settlement_amount,"0")){
+                settlement_amount = NumberUtil.div(settlement_amount,"100",2);
+            }
+            baseBean.setSettlement_amount(settlement_amount);
+
+            String Total_fee = total_fee.toString();
+            if (!StringUtils.equals(Total_fee,"0")){
+                Total_fee = NumberUtil.div(Total_fee,"100",2);
+            }
+            baseBean.setTotal_fee(Total_fee);
+            spdbFundSettlementSynBeanList.add(baseBean);
+        }
+
+        spdbFundSettlementBean.setNextToken(response.getNextToken());
+        spdbFundSettlementBean.setSpdbFundSettlementSynBeanList(spdbFundSettlementSynBeanList);
+        log.info("浦发银行资金结算数据查询完成,耗时:" + (DateUtils.getNow() - startTime));
+        return spdbFundSettlementBean;
+
+    }
+}
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

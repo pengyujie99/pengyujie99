@@ -1213,6 +1213,8 @@ public class SendEmail {
 
 线程复用，可以控制最大并发数，方便管理
 
+核心线程数、最大线程数、队列大小 ，比作银行取钱的：开启窗口数、总窗口数、排队的座位。
+
 ~~~java
 package com.example.demo.kuangstudy.pool;
 

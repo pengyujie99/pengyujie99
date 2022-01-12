@@ -67,7 +67,7 @@ tags:
 
 ### 后端
 
-- FileNotFoundException: xxxxx路径 (拒绝访问）)
+#### FileNotFoundException: xxxxx路径 (拒绝访问）)
 
 ![](img src="/img/notes/bug/1.png")
 
@@ -77,9 +77,9 @@ tags:
 
 
 
-- idea里从svn中检出工程报错.java:1: 非法字符： \65279
+#### idea里从svn中检出工程报错.java:1: 非法字符： \65279
 
-  首先导下来的默认是UTF-8，编译时报非法字符的错误；
+首先导下来的默认是UTF-8，编译时报非法字符的错误；
 
 ​    1、先点右下角，cover成GBK，有中文的话然后会发现中文乱码，
 
@@ -93,7 +93,7 @@ tags:
 
 
 
-- 今天做码神之路的blog项目，然后springboot一直报错
+#### 今天做码神之路的blog项目，然后springboot一直报错
 
 > Invalid bound statement (not found): com.pengyujie.blogapi.dao.mapper.TagMapper.findHotsTagIds
 
@@ -109,7 +109,7 @@ tags:
 
 
 
-- 报错：Cause: com.mysql.cj.jdbc.exceptions.MysqlDataTruncation: Data truncation: Out of range value for column 'article_id' at row 1
+#### 报错：Cause: com.mysql.cj.jdbc.exceptions.MysqlDataTruncation: Data truncation: Out of range value for column 'article_id' at row 1
 
 <img src="/img/notes/Blog/5.png">
 
@@ -119,11 +119,11 @@ tags:
 
 
 
-- 还有一种因为精度丢失的错误，将int转换为String类型解决成功。
+还有一种因为精度丢失的错误，将int转换为String类型解决成功。
 
 
 
-- 不小心将springboot项目变为了普通项目，复原
+#### 不小心将springboot项目变为了普通项目，复原
 
 src变为springboot项目
 
@@ -137,7 +137,7 @@ pom变为springboot的pom
 
 
 
-- 空指针异常
+#### 空指针异常
 
 造成原因
 
@@ -157,14 +157,14 @@ pom变为springboot的pom
 
 
 
-- 注解@Transactional失效
+#### 注解@Transactional失效
 
 1、由于调用本类方法，比如 一个类的a方法，调用这个类的b方法，属于本类调用，不会生效， **只有当事务方法被当前类以外的代码调用时，才会由Spring生成的代理对象来管理。**
 2、注解修饰在非public的方法上。**虽然事务无效，但不会有任何报错，这是我们很容犯错的一点。**
 
 
 
-- 利用迭代器去取map的kv时，遇到的问题
+#### 利用迭代器去取map的kv时，遇到的问题
 
 每一次调用`it.next()`方法it就已经是下一个元素了所以只需要调用一次。
 
