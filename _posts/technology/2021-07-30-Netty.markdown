@@ -1,0 +1,546 @@
+---
+layout:     post
+title:      "Netty"
+subtitle:   "网络通信NIO"
+date:       2021-07-30 12:00:00
+author:     "Pengyujie"
+header-img: "img/tag-bg.jpg"
+catalog: true
+tags:
+    - NIO
+    - Java
+---
+
+
+
+### NIO
+
+> NIO（non-blocking io   非阻塞io）三大组件
+>
+> **Channel** 可以理解为一种nio的双向通道，作用与io的Stream类似；**buffer** 一个缓冲区；**Selector** 选择器
+
+
+
+Java NIO系统的**核心**在于：**通道(Channel)和缓冲区(Buffer)**。通道表示打开到 IO 设备(例如：文件、套接字)的连接。若需要使用 NIO 系统，需要获取用于**连接 IO 设备的通道**以及用于**容纳数据的缓冲区**。然后操作缓冲区，对数据进行处理
+
+简而言之，**通道负责传输，缓冲区负责存储**
+
+
+
+#### Selector选择器
+
+selector的作用就是配合一个线程来管理多个channel（fileChannel因为是阻塞式的，所以无法使用selector），获取channel上的事件进行监听，这些channel工作在非阻塞模式下，当一个channel没有需要执行的任务时，线程可以先去执行其他channel的任务。适合连接数较多，但流量比较少的场景。
+
+![1](2021-07-30-Netty.assets/1.jpg)
+
+若事件未就绪，调用selector的select()方法会阻塞线程，直到channel发生就绪事件，事件就绪之后，select()方法就会返回这些事件交给Thread去处理。
+
+
+
+
+
+#### ByteBuffer
+
+~~~java
+package com.example.demo.netty;
+
+import java.io.FileInputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+
+public class TestByte {//使用ByteBuffer读取文件中的内容
+    public static void main(String[] args) throws Exception {
+        //自己在本地写一个文档 data.txt
+        FileChannel channel =new FileInputStream("data.txt").getChannel();
+        //准备缓存区 设置大小
+        ByteBuffer byteBuffer =ByteBuffer.allocate(10);//10字节大小
+        //从通道channel读入缓冲区buffer  如果没有数据就会返回 -1
+        int len;
+        while((len= channel.read(byteBuffer))!=-1){
+            byteBuffer.flip();//切换到读模式
+            //打印buffer内容
+            while(byteBuffer.hasRemaining()){//是否buffer还有剩余数据
+                byte b =byteBuffer.get();
+                System.out.print((char) b);
+            }
+            byteBuffer.clear();
+        }
+    }
+}
+~~~
+
+
+
+
+
+#### 核心属性
+
+字节缓冲区的父类Buffer中有几个核心属性，如下
+
+```java
+// Invariants: mark <= position <= limit <= capacity
+private int mark = -1;
+private int position = 0;
+private int limit;
+private int capacity;
+```
+
+- **capacity**：缓冲区的容量。通过构造函数赋予，一旦设置，无法更改
+- **limit**：缓冲区的界限。位于limit 后的数据不可读写。缓冲区的限制不能为负，并且**不能大于其容量**
+- **position**：**下一个**读写位置的索引（类似PC）。缓冲区的位置不能为负，并且**不能大于limit**
+- **mark**：记录当前position的值。**position被改变后，可以通过调用reset() 方法恢复到mark的位置。**
+
+
+
+~~~java
+ //字符串写入buffer
+        ByteBuffer buffer =ByteBuffer.allocate(10);
+        buffer.put("hello".getBytes());
+        buffer.flip();//切换到读模式 不可省略 因为flip方法将pos切换到0
+        while(buffer.hasRemaining()){
+            byte c = buffer.get();
+            System.out.print((char) c);
+        }
+        buffer.clear();
+~~~
+
+
+
+
+
+
+
+#### 粘包与半包现象
+
+网络上有多条数据发送给服务端，数据之间使用 \n 进行分隔
+但由于某种原因这些数据在接收时，被进行了重新组合，例如原始数据有3条为
+
+- Hello,world\n
+- I’m Nyima\n
+- How are you?\n
+
+变成了下面的两个 byteBuffer (粘包，半包)
+
+- Hello,world\nI’m Nyima\nHo
+- w are you?\n
+
+
+
+出现原因
+
+**粘包**
+
+发送方在发送数据时，并不是一条一条地发送数据，而是**将数据整合在一起**，当数据达到一定的数量后再一起发送。这就会导致多条信息被放在一个缓冲区中被一起发送出去
+
+**半包**
+
+接收方的缓冲区的大小是有限的，当接收方的缓冲区满了以后，就需要**将信息截断**，等缓冲区空了以后再继续放入数据。这就会发生一段完整的数据最后被截断的现象
+
+
+
+解决办法:
+
+- 通过get(index)方法遍历ByteBuffer，遇到分隔符时进行处理。注意：get(index)不会改变position的值
+  - 记录该段数据长度，以便于申请对应大小的缓冲区
+  - 将缓冲区的数据通过get()方法写入到target中
+- 调用**compact方法**切换写模式，因为缓冲区中可能还有未读的数据 利用这个将未读数据迁前移
+
+
+
+#### NIO非阻塞模式 
+
+就算没有数据去读cpu利用率也是过高
+
+服务端
+
+~~~java
+package com.example.demo.netty;
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Server01 {
+    public static void main(String[] args) throws IOException {
+        //0.建立缓存区
+        ByteBuffer buffer =ByteBuffer.allocate(16);
+
+        //1.创建服务器
+        ServerSocketChannel ssc =ServerSocketChannel.open();
+        ssc.configureBlocking(false);//非阻塞模式 默认是阻塞模式
+
+        //2.绑定监听端口
+        ssc.bind(new InetSocketAddress(8080));
+
+        //3.连接集合
+        List<SocketChannel> channels =new ArrayList<>();
+        System.out.println("接收信息中。。。");
+        while(true){
+            //4.accept 建立与客户端的连接，SocketChannel用来与客户端进行通信
+            SocketChannel accept = ssc.accept();//在非阻塞模式下 没有接收到连接返回null
+            if(accept!=null){
+                channels.add(accept);
+            }
+
+            for (SocketChannel channel : channels) {
+                int read=channel.read(buffer);//在非阻塞模式下，没有读到数据返回0
+                if(read>0){
+                    System.out.println("有数据！ 正在读取channel的数据中。。。");
+                    while(read!=-1){//数据没有读取完 继续进行打印
+                        buffer.flip();
+                        while(buffer.hasRemaining()){
+                            byte b =buffer.get();
+                            System.out.print(""+(char) b);
+                        }
+                        buffer.clear();
+                    }
+                }
+            }
+        }
+    }
+}
+~~~
+
+
+
+客户端
+
+~~~java
+package com.example.demo.netty;
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.channels.SocketChannel;
+import java.nio.charset.Charset;
+
+public class Client01 {
+    public static void main(String[] args) throws IOException {
+        SocketChannel sc = SocketChannel.open();
+        sc.connect(new InetSocketAddress("localhost",8080));
+        sc.write(Charset.defaultCharset().encode("This is a nio"));
+    }
+}
+~~~
+
+
+
+#### 利用selector选择器
+
+- accept - 会在有连接请求的时候触发
+- connect - 客户端 连接建立后触发
+- read - 可读事件
+- write - 可写事件
+
+
+
+最后要么处理，要么取消，不然没有处理或者取消下次select()方法，又会查询出这个事件，放到迭代器去处理，就这样一直循环了。
+
+~~~java
+package com.example.demo.netty;
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.ServerSocketChannel;
+
+import java.util.Iterator;
+
+
+public class SelectorServer01 {
+    public static void main(String[] args) throws IOException {
+        //a.创建选择器 去管理多个channel
+        Selector selector =Selector.open();
+
+        //1.创建服务器
+        ServerSocketChannel ssc =ServerSocketChannel.open();
+        ssc.configureBlocking(false);//非阻塞模式 默认是阻塞模式
+
+        //b.建立selector和channel的联系 注册
+        //SelectionKey 就是将来事件发生后，通过它可以知道事件和哪个channel的事件
+        SelectionKey sscKey = ssc.register(selector, 0, null);//0 表示不关注任何事件
+        //key 只关注accept事件
+        sscKey.interestOps(SelectionKey.OP_ACCEPT);
+
+        //2.绑定监听端口
+        ssc.bind(new InetSocketAddress(8080));
+
+        System.out.println("接收信息中。。。");
+        while(true){
+            //c.select()方法 没有事件发生 就会阻塞 就不需要去通知 ，有事件 就去恢复运行
+            selector.select();
+
+            //d.处理事件  selectedKeys内部中包含了所有发生的事件
+            Iterator<SelectionKey> iter = selector.selectedKeys().iterator();
+            while(iter.hasNext()){
+                SelectionKey key = iter.next();
+                ServerSocketChannel sc = (ServerSocketChannel) key.channel();
+                sc.accept();//处理
+                //key.cancel();//取消
+            }
+        }
+    }
+}
+~~~
+
+
+
+#### 理解
+
+selector用于管理channel，**首先向selector中注册channel，然后selector会调用select()去将发生的事件加入到selectedKeys，利用迭代器遍历selectedKeys，去处理事件，处理完后需要手动remove()清除对应事件**（因为selectedKeys不会主动清除，如果处理完后没有清除，下次遍历selectedKeys就会在进行处理这个事件，由于这个事件实际已经被处理了，就会导致报错）。
+
+selector会在发生事件后，向selectedKeys集合中加入key。
+
+selectedKeys不会主动去删除已经处理的事件，需要手动删除，如果不删除，下次遍历进行处理的时候，有这个key但是事件已经处理就会报错。
+
+![2](2021-07-30-Netty.assets/2.png)
+
+服务端
+
+~~~java
+package com.example.demo.netty;
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.*;
+
+import java.util.Iterator;
+
+
+public class SelectorServer01 {
+    public static void main(String[] args) throws IOException {
+        //a.创建选择器 去管理多个channel
+        Selector selector =Selector.open();
+
+        //1.创建服务器
+        ServerSocketChannel ssc =ServerSocketChannel.open();
+        ssc.configureBlocking(false);//非阻塞模式 默认是阻塞模式
+
+        //b.建立selector和channel的联系 注册 sscKey可以管理ssc这个事件 看是否有连接
+        //SelectionKey 就是将来事件发生后，通过它可以知道事件和哪个channel的事件
+        SelectionKey sscKey = ssc.register(selector, 0, null);//0 表示不关注任何事件
+        //key 只关注accept事件
+        sscKey.interestOps(SelectionKey.OP_ACCEPT);
+
+        //2.绑定监听端口
+        ssc.bind(new InetSocketAddress(8080));
+
+        System.out.println("接收信息中。。。");
+        while(true){
+            //c.select()方法 没有事件发生 就会阻塞 就不需要去通知 ，有事件 就去恢复运行
+            selector.select();
+
+            //d.处理事件  selectedKeys内部中包含了所有发生的事件
+            Iterator<SelectionKey> iter = selector.selectedKeys().iterator();
+            while(iter.hasNext()){
+                SelectionKey key = iter.next();
+                iter.remove();//非常重要的一步 需要从selectedKeys中删除，否则下次selectedKeys集合中，还存在该key但事件已经被处理 就会报错
+                if (key.isAcceptable()) {//如果是accept事件
+                    ServerSocketChannel channel = (ServerSocketChannel) key.channel();
+                    SocketChannel sc = channel.accept();//处理
+                    //key.cancel();//取消
+                    sc.configureBlocking(false);//非阻塞
+                    //sc注册到selector中 ，scKey可以管理sc这个channel 看是否可读 可写
+                    SelectionKey scKey = sc.register(selector, 0, null);//注册到selector中
+                    scKey.interestOps(SelectionKey.OP_READ);
+                }else if(key.isReadable()){
+                    SocketChannel channel = (SocketChannel) key.channel();//拿到触发事件的channel 然后去处理
+                    ByteBuffer buffer =ByteBuffer.allocate(16);
+                    try {
+                        while((channel.read(buffer))!=-1){//read可能异常 处理失败 这时候就需要取消事件
+                            buffer.flip();
+                            while(buffer.hasRemaining()){
+                                byte b = buffer.get();
+                                System.out.print((char) b);
+                            }
+                            buffer.clear();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        key.cancel();//如果read异常 比如客户端断开没有值需要read 就会取消事件
+                    }
+
+                }
+
+            }
+        }
+    }
+}
+~~~
+
+
+
+客户端
+
+~~~java
+package com.example.demo.netty;
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.channels.SocketChannel;
+import java.nio.charset.Charset;
+
+public class Client01 {
+    public static void main(String[] args) throws IOException {
+        SocketChannel sc = SocketChannel.open();
+        sc.connect(new InetSocketAddress("localhost",8080));
+        sc.write(Charset.defaultCharset().encode("This is a nio"));
+    }
+}
+~~~
+
+
+
+**未完待续**
+
+
+
+### Netty
+
+>Netty是一个基于NIO的网络编程框架。Netty提供异步的、[事件驱动](https://baike.baidu.com/item/事件驱动/9597519)的网络应用程序框架和工具，用以快速开发高性能、高可靠性的[网络服务器](https://baike.baidu.com/item/网络服务器/99096)和客户端程序。
+
+
+
+~~~xml
+<!--netty依赖-->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.20.Final</version>
+        </dependency>
+~~~
+
+
+
+
+
+利用Netty框架实现 hello world
+
+~~~java
+package com.example.demo.netty.hello;
+
+
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.string.StringDecoder;
+
+public class Server {
+    public static void main(String[] args) {
+        // 1、启动器，负责装配netty组件，启动服务器
+        new ServerBootstrap()
+                // 2、创建 NioEventLoopGroup，可以简单理解为 线程池 + Selector
+                .group(new NioEventLoopGroup())
+                // 3、选择服务器的 ServerSocketChannel 实现
+                .channel(NioServerSocketChannel.class)
+                // 4、child 负责处理读写，该方法决定了 child 执行哪些操作
+                // ChannelInitializer 处理器（仅执行一次）
+                // 它的作用是待客户端SocketChannel建立连接后，执行initChannel以便添加更多的处理器
+                .childHandler(new ChannelInitializer<NioSocketChannel>() {
+                    @Override
+                    protected void initChannel(NioSocketChannel ch) throws Exception {
+                        // 5、SocketChannel的处理器，使用StringDecoder解码，ByteBuf=>String
+                        ch.pipeline().addLast(new StringDecoder());
+                        // 6、SocketChannel的业务处理，使用上一个处理器的处理结果
+                        ch.pipeline().addLast(new ChannelInboundHandlerAdapter(){
+                            @Override
+                            public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+                                System.out.println(msg);
+                            }
+                        });
+                    }
+                })
+                // 7、ServerSocketChannel绑定8080端口
+                .bind(8080);
+
+    }
+}
+~~~
+
+
+
+客户端
+
+~~~java
+package com.example.demo.netty.hello;
+
+import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.string.StringEncoder;
+
+import java.net.InetSocketAddress;
+
+public class Client {
+    public static void main(String[] args) throws InterruptedException {
+        new Bootstrap()
+                .group(new NioEventLoopGroup())
+                // 选择客户 Socket 实现类，NioSocketChannel 表示基于 NIO 的客户端实现
+                .channel(NioSocketChannel.class)
+                // ChannelInitializer 处理器（仅执行一次）
+                // 它的作用是待客户端SocketChannel建立连接后，执行initChannel以便添加更多的处理器
+                .handler(new ChannelInitializer<Channel>() {
+                    @Override
+                    protected void initChannel(Channel channel) throws Exception {
+                        // 消息会经过通道 handler 处理，这里是将 String => ByteBuf 编码发出
+                        channel.pipeline().addLast(new StringEncoder());
+                    }
+                })
+                // 指定要连接的服务器和端口
+                .connect(new InetSocketAddress("localhost", 8080))
+                // Netty 中很多方法都是异步的，如 connect
+                // 这时需要使用 sync 方法等待 connect 建立连接完毕
+                .sync()
+                // 获取 channel 对象，它即为通道抽象，可以进行数据读写操作
+                .channel()
+                // 写入消息并清空缓冲区
+                .writeAndFlush("hello world");
+    }
+}
+~~~
+
+
+
+实际步骤顺序
+
+![3](2021-07-30-Netty.assets/3.png)
+
+
+
+
+
+
+
+**未完待续**
+
+
+
+
+
+
+
+[NIO基础笔记来源](https://nyimac.gitee.io/2021/04/18/Netty%E5%AD%A6%E4%B9%A0%E4%B9%8BNIO%E5%9F%BA%E7%A1%80/#clear-VS-compact)
+
+[Netty笔记来源](https://nyimac.gitee.io/2021/04/25/Netty%E5%9F%BA%E7%A1%80/#%E4%B8%80%E3%80%81%E6%A6%82%E8%BF%B0)
+
+
+
+
+
+
+
+
+
+
+

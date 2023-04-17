@@ -21,7 +21,7 @@ springcloud的就是业务模块化。
 微服务：
 就是上面拆分之后的一个个小小的模块、业务。  
 
-pringCloud：
+springCloud：
 是基于springboot提供的一套微服务解决方案。是各个微服务架构落地技术的集合体，也叫微服务全家桶。
 是来管理协调微服务。为各个服务之间提供：配置管理、服务发现、断路由、路由、微代理、分布式会话等等集成服务。  
 
@@ -56,29 +56,18 @@ springboot:
 		服务注册发现：Eureka
 		熔断机制：Hystrix
 	
-	
-	
     
     2.Apache Dubbo Zookeeper	半自动 还需要整合其他的
     API:没有 需要找第三方组件或者自己实现
     通信：Dubbo --RPC通信
     服务注册发现：Zookeeper
     熔断机制：没有 可以借助Hystrix
-    
-    
-    
-    
-    
+   
+   
     3.Spring Cloud Alibaba	最新的一站式解决方案
-	
-
-
-
-
-
 
 
 ~~~
 
-未完待续
+
 

@@ -1,0 +1,196 @@
+---
+layout:     post
+title:      "小BUg库"
+subtitle:   "遇到的一些小问题解决方法"
+date:       2021-05-13
+author:     "Pengyujie"
+header-img: "img/tag-bg.jpg"
+hidden: true
+tags:
+    - Bug
+    - linux
+---
+
+>有前端 有后端
+
+
+
+### 前端
+
+
+
+#### ajax返回信息 不走success走error 
+
+证明可能请求格式不对  比如以application/json格式请求后端 后端接口是 application/html格式 就会报404错误 请求不到对应接口
+
+解决：需要改请求格式或者接口其中一个即可（可在后端使用注解@ResponseBody   来控制为json格式）
+
+
+
+
+
+#### 前端方法执行了 但是方法内的ajax没有执行 报错403 
+
+![2](\img\notes\bug\2.png)
+
+解决方法：加上请求类型contentType
+
+~~~javascript
+//查询省市区信息
+			$.ajax({
+				type: "post",
+				url : "${ctx}/provincecitystd/getprovince",
+				contentType: 'application/json',
+				dataType:'json',
+				async:false,
+				success: function(data){
+					$("#merchantprovince").empty();
+					var html = "<option value=\"-1\" id=\"-1\" code=\"-1\">--请选择--</option>";
+					$(data).each(function(index){
+						html += "<option value=\""+data[index].name+"\""+" id=\""+data[index].id+"\""+" code=\""+data[index].code+"\""+">"+data[index].name+"</option>";
+					});
+					$("#merchantprovince").append(html);
+				}
+			});
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+### 后端
+
+#### FileNotFoundException: xxxxx路径 (拒绝访问）)
+
+![1](D:\Typora\Blog\pengyujie99.github.io\_posts\knowledge_point\2021-10-11-Bug.assets\1.png)
+
+原因： java无权访问文件目录 
+
+解决方法：以管理员方式启动 或者 在IDEA右键 属性->兼容 设置为以管理员方式运行。
+
+
+
+#### idea里从svn中检出工程报错.java:1: 非法字符： \65279
+
+首先导下来的默认是UTF-8，编译时报非法字符的错误；
+
+​    1、先点右下角，cover成GBK，有中文的话然后会发现中文乱码，
+
+​    2、继续右下角，reload成UTF-8，然后顶部有红色提示 (File was load in the wrong encodeing:utf-8)
+
+​    3、点右上角，reload in another encoding ，选择GBK，然后reload，会发现乱码恢复
+
+​    4、继续右下角，cover成UTF-8，完成。
+
+  总结：在UTF-8和GBK之间反复横跳。
+
+
+
+
+
+#### 报错：Cause: com.mysql.cj.jdbc.exceptions.MysqlDataTruncation: Data truncation: Out of range value for column 'article_id' at row 1
+
+![5](D:\Typora\Blog\pengyujie99.github.io\_posts\knowledge_point\2021-10-11-Bug.assets\5.png)
+
+超出界限   原因一般是二种：一种是值为-1，一种值过大。
+
+我的是第二种，给的值过大，在数据库中将article_id的int类型转换为bigint
+
+还有一种因为精度丢失的错误，将int转换为String类型解决成功。
+
+
+
+#### 不小心将springboot项目变为了普通项目，复原
+
+src变为springboot项目
+
+![6](D:\Typora\Blog\pengyujie99.github.io\_posts\knowledge_point\2021-10-11-Bug.assets\6.png)
+
+
+
+pom变为springboot的pom
+
+![7](D:\Typora\Blog\pengyujie99.github.io\_posts\knowledge_point\2021-10-11-Bug.assets\7.jpg)
+
+
+
+#### 空指针异常
+
+造成原因
+
+1、空数据equals   
+
+~~~java
+        String s =null;
+        System.out.println(s.equals("nishi1"));
+        //System.out.println("nishi".equals(s));//将常量放在前面，就不会出现空指针异常
+~~~
+
+2、toString（）方法
+
+如果数据为空，使用toString（）方法就会造成空指针，可以使用String.valueOf
+
+
+
+
+
+#### 注解@Transactional失效
+
+[注解失效详情](https://pengyujie99.github.io/2021/06/10/%E9%9D%A2%E8%AF%95%E7%AC%94%E8%AE%B0/)
+
+1、由于调用本类方法，比如 一个类的a方法，调用这个类的b方法，属于本类调用，不会生效， **只有当事务方法被当前类以外的代码调用时，才会由Spring生成的代理对象来管理。**
+2、注解修饰在非public的方法上。**虽然事务无效，但不会有任何报错，这是我们很容犯错的一点。**
+
+
+
+
+
+#### 利用迭代器去取map的kv时，遇到的问题
+
+每一次调用`it.next()`方法it就已经是下一个元素了所以只需要调用一次。
+
+错误的写法
+
+```
+Set<Map.Entry<String, Object>> entries = map.entrySet();
+        Iterator<Map.Entry<String, Object>> it = entries.iterator();
+        int flag = 0;
+        while(it.hasNext()){
+            result = result+it.next().getKey() + "=" + it.next().getValue();
+        }
+```
+
+
+
+正确的写法
+
+~~~
+Set<Map.Entry<String, Object>> entries = map.entrySet();
+        Iterator<Map.Entry<String, Object>> it = entries.iterator();
+        int flag = 0;
+        while(it.hasNext()){
+            Map.Entry<String, Object> next = it.next();
+            result = result+next.getKey() + "=" + next.getValue();
+        }
+~~~
+
+
+
+
+
+
+
+
+
+[码神之路项目错误笔记][https://pengyujie99.github.io/2021/07/19/mszluBlog/]
+
+
+

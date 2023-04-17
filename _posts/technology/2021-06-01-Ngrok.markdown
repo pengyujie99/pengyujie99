@@ -1,0 +1,104 @@
+---
+layout:     post
+title:      "Ngrok"
+subtitle:   "Ngrok内网穿透"
+date:       2021-06-01
+author:     "Pengyujie"
+header-img: "img/tag-bg.jpg"
+tags:
+    - Java
+    - NAT
+    - 图标
+
+---
+
+### 内网穿透
+
+>就是让自己的网址暴露出去，让外网可以访问。比如你写了一个网站，如果在家里运行，那么只能自己电脑和同一个局域网（比如连接同一个网络 WiFi）的电脑可以访问。如果要让外界访问到这个网站就需要使用NAT技术，也就是内网穿透。
+
+
+
+早些时候，IPV4地址够用的时候是可以每个电脑直接通过ip进行访问，不需要用到内网穿透。
+
+随着设备数量增加，ipv4地址不够，ipv6出现，这时候想要访问到这个ipv6的设备就需要一个公网ip。
+
+而当自己所能操作的范围内没有公网ip，就不能实现自己想要的内网穿透。但实际上只要你能上网，对外而言你就一定有一个公网ip，只是你操作不到！比如小区局域网、城域局域网。
+
+比如：你在家使用手机上网，你能访问到外界网络就是NAT（内网穿透），因为你的路由器分配给了你一个公网ip你并不知道。家里其他人能上网同样如此。
+
+
+
+#### 进入官网 注册账号，然后登入
+
+**[ngrok官网](https://ngrok.com/)**
+
+我是用的github直接登入，复制身份令牌
+
+![1](D:\Typora\Blog\pengyujie99.github.io\_posts\technology\2021-06-01-Ngrok.assets\1.png)
+
+
+
+#### 点击设置安装，安装对应的安装包，然后运行
+
+将对应的令牌写入yml，运行如下命令（这是window的cmd命令 linux为./）
+
+~~~shell
+ngrok authtoken 1wsYWmAzYzEUCayWFG6AZVeeRcJ_2b5K4j4gascYzUDs1TsN9
+~~~
+
+
+
+#### 将端口暴露
+
+~~~shell
+ngrok http 9090
+~~~
+
+
+
+成功
+
+![2](D:\Typora\Blog\pengyujie99.github.io\_posts\technology\2021-06-01-Ngrok.assets\2.png)
+
+
+
+之后可以通过对应的公网ip（https://6233f1e8c4ce.ngrok.io）进行访问了内网（http://localhost:9090）了。
+
+
+
+#### 扩展
+
+ngrok 除了提供端口映射之外，还提供了一个实时的Web UI，您可以在其中查看你的隧道上运行的所有HTTP流量。在启动 ngrok 之后，只需在Web浏览器中打开[http://localhost:4040](https://links.jianshu.com/go?to=http%3A%2F%2Flocalhost%3A4040%2F)即可检查请求详细信息。
+
+
+
+
+
+
+
+
+
+### freenom域名
+
+
+
+1、进入freenom官网，输入你想要的域名（注意 这里需要输入全称，比如输入pengyujie出来的可能选不了，需要输入pengyujie.cf）点击查找，出来相应域名之后选择。
+
+
+
+2.然后会让你输入相应的邮箱或者使用gmail直接登入，这里我直接gmail登入，它会发送一个邮件到你对应的邮箱，进入邮箱打开链接，输入对应的信息，点击确认，之后你就可以使用这个免费的域名了（可以选择免费时间，最多为12months）
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

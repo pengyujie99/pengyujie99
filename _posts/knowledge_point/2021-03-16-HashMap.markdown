@@ -1,0 +1,192 @@
+---
+layout:     post
+title:      "HashMap"
+subtitle:   "HashMap Put和Get的原理"
+date:       2021-03-16 12:00:00
+author:     "Pengyujie"
+header-img: "img/tag-bg.jpg"
+tags:
+    - HashMap
+    - Java
+---
+>众所周知，HashMap是一个用于存储键值对的集合，
+>HashMap是   数组＋链表+红黑树   结构而在HashMap中使用最多的大概是，Put和Get方法来进行存储和获取。
+>HashMap数组每一个元素的初始值都是Null。
+
+![1](D:\Typora\Blog\pengyujie99.github.io\_posts\knowledge_point\2021-03-16-HashMap.assets\1.jpg)
+
+
+
+#### Put方法
+
+
+进行put.("apple",0)，需要利用一个哈希函数进行确定插入位置 index = Hash("apple"),然后进行插入。
+
+<br>![2](D:\Typora\Blog\pengyujie99.github.io\_posts\knowledge_point\2021-03-16-HashMap.assets\2.jpg)
+
+<br>但是HashMap长度是有限的，当一个index有多个值时，就会冲突，这时候就需要用到链表了，
+<br>只需要将新插入的数据插入这个index的链表即可
+
+<br>![3](D:\Typora\Blog\pengyujie99.github.io\_posts\knowledge_point\2021-03-16-HashMap.assets\3.jpg)
+
+<br>![4](D:\Typora\Blog\pengyujie99.github.io\_posts\knowledge_point\2021-03-16-HashMap.assets\4.jpg)
+
+<br>
+
+数组扩容触发条件：
+
+1.链表长度到达 总长度*扩容因子 （源代码为0.75）
+
+2.链表的长度达到8个
+
+
+
+而转换为红黑树的触发条件有二个：
+<br>1.链表的长度达到8个
+<br>2.数组长度达到64个
+
+
+
+#### Get方法
+
+根据key进行查找value时，将输入的key进行一次映射查找出index， index=Hash("apple")
+
+由于查出来的index下的数据，可能是一个链表结构，这时候就需要顺着链表头结点，依次往下查找
+
+
+
+
+#### HashMap源码分析
+
+~~~java
+package com.collection.map;
+
+import java.util.HashMap;
+
+public class HashMapSource {
+
+    public static void main(String[] args) {
+
+        /**
+        * 1.执行构造器 初始化加载因子0.75 map为null
+        * */
+        HashMap map = new HashMap();
+
+        /**
+         * 2.执行put
+         * - 首先会调用hash方法去算出key的hash值（hash方法中有hashCode方法加上hash值右移16位减少hash冲突）
+         * static final int hash(Object key) {
+         *         int h;
+         *         return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
+         *     }
+         * - 然后判断map是否为null 为null就进行扩容为16 然后根据hash值找到对应得索引位置 判断对应位置是否存在值，没有直接放入。然后判断一次map是否大于threshold 大于则扩容 小于不扩容
+         *          ++modCount;
+         *         if (++size > threshold)   //加载因子0.75*map大小
+         *             resize();            //扩容
+         *         afterNodeInsertion(evict);
+         *         return null;
+         * */
+        map.put("java","peng");
+
+        /**
+         *3.继续执行put
+         * - 首先会调用hash方法去算出key的hash值（hash方法中有hashCode方法加上hash值右移16位减少hash冲突）
+         * - 然后判断map是否为null 不为空就不会扩容  然后根据hash值找到对应得索引位置 判断对应位置是否存在值，没有直接放入。然后判断一次map是否大于加载因子 大于则扩容 小于不扩容
+         * */
+        map.put("html","yu");
+
+        /**
+         *4.继续执行put
+         * - 首先会调用hash方法去算出key的hash值（hash方法中有hashCode方法加上hash值右移16位减少hash冲突）
+         * - 然后判断map是否为null 不为空就不会扩容  然后根据hash值找到对应得索引位置 判断对应位置是否存在值，存在值。
+         * - 如果多个值即链表 则进行循环 判断key的hash值是否相同并且equals返回true，是则该key直接替换掉原来的key 否则加在链表最后
+         * - 然后判断一次map是否大于加载因子 大于则扩容 小于不扩容
+         * */
+        map.put("java","jie");
+        System.out.println(map);
+
+        /** put 源码解读 jdk8
+         * public V put(K key, V value) {
+         *         return putVal(hash(key), key, value, false, true);
+         *     }
+         *
+         *
+         * final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
+         *                    boolean evict) {
+         *         Node<K,V>[] tab; Node<K,V> p; int n, i;
+         *         //首先进行判断table是否为null 为null进行扩容resize()
+         *         if ((tab = table) == null || (n = tab.length) == 0)
+         *             n = (tab = resize()).length;
+         *         //再判断table中对应位置是否有值（根据要存入的key的hash判断出的索引位置） 没有则直接存入
+         *         if ((p = tab[i = (n - 1) & hash]) == null)
+         *             tab[i] = newNode(hash, key, value, null);
+         *         else {//有值
+         *             Node<K,V> e; K k;
+         *             //判断key的hash值是否相同并且equals返回true，是则该key直接替换掉原来的key
+         *             if (p.hash == hash &&
+         *                 ((k = p.key) == key || (key != null && key.equals(k))))
+         *                 e = p;
+         *             //如果已经是红黑树了 就按照红黑树存入
+         *             else if (p instanceof TreeNode)
+         *                 e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
+         *             //否则 就加在链表最后
+         *             else {
+         *                 for (int binCount = 0; ; ++binCount) {
+         *                     if ((e = p.next) == null) {
+         *                         p.next = newNode(hash, key, value, null);
+         *                         if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
+         *                              //进行红黑树转换  方法内部还会进行一次判断
+         *                             treeifyBin(tab, hash);
+         *                         break;
+         *                     }
+         *                     if (e.hash == hash &&
+         *                         ((k = e.key) == key || (key != null && key.equals(k))))
+         *                         break;
+         *                     p = e;
+         *                 }
+         *             }
+         *             if (e != null) { // existing mapping for key
+         *                 V oldValue = e.value;
+         *                 if (!onlyIfAbsent || oldValue == null)
+         *                     e.value = value;
+         *                 afterNodeAccess(e);
+         *                 return oldValue;
+         *             }
+         *         }
+         *         ++modCount;
+         *         //如果大于threshold 会进行扩容
+         *         if (++size > threshold)
+         *             resize();
+         *         afterNodeInsertion(evict);
+         *         return null;
+         *     }
+         * */
+    }
+}
+~~~
+
+
+
+
+---
+HashMap，LinkedHashMap，和TreeMap有什么区别？
+
+LinkedHashMap保存了记录的插入顺序，在利用lterator遍历时，
+先取到的就是先插入的，遍历要比HashMap慢。
+
+TreeMap实现了SortMap接口，能够把它保存的记录根据键排序
+（默认为按照键值升序排序，也可以指定排序的比较器）
+
+---
+HashTable与HashMap
+
+HashTable的KV不允许为null，HashMap的KV可以为null。
+
+前者是线程安全，后者是线程不安全，后者在并发情况下会造成死循环。
+
+
+
+
+
+
+

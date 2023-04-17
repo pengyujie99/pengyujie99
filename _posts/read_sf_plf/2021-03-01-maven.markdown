@@ -12,7 +12,7 @@ tags:
 
 > Maven  JDK 
 
-<br><b>Maven</b>
+<b>Maven</b>
 
 >本地仓库设置(新建一个repo的文件夹作为本地仓库)
 >D:\Maven\apache-maven-3.6.3\repo
@@ -43,3 +43,8 @@ D:\Maven\apache-maven-3.6.3\conf\settings 进行编辑添加
 <br>想在进行其他project时不需要进行配置（更改idea打开新项目默认配置），需要在Settings for New Project配置
 <img src="/img/notes/maven2.png" >
 
+
+
+
+
+![image-20220809100225649](D:\Typora\Blog\pengyujie99.github.io\_posts\read_sf_plf\2021-03-01-maven.assets\image-20220809100225649.png)

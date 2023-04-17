@@ -511,6 +511,38 @@ select * from student where student_name = 'lyrics'
 
 
 
+#### URL路径问题
+
+访问遇到了一个之前的问题，之前解决但是忘了记录，想起来现在记录一下
+
+首先先说一下设置图标的二种
+
+- 全局设置为统一图标
+
+在对应的根路径添加favicon.ico图标格式的文件。
+
+- 对一个页面添加图标
+
+在HTML中添加图片，不一定要ico格式文件。
+
+~~~html
+<link rel="icon" href="../images/favicon.ico" type="image/x-icon" />
+~~~
+
+
+
+问题：
+
+当我们设置路径的时候，设置完成之后可以ctrl+点击  进入对应的资源的时候，我们以为是对的，但是我们启动项目结果资源404。
+
+这时候可能是路径问题，比如当我设置favicon.ico的路径：为`../static/images/favicon.ico` 此时点击可以进去对应的资源。启动项目后图标没有出来图标资源404。
+
+解决：如果我们将其改为`../images/favicon.ico` 点击并不能访问到对应的资源，但是启动后资源是可以获取到的。../ 是从根目录开始这里是从static目录开始。
+
+**注意：对于favicon.ico来说，图片大小也不能过大，否则也是404，即使路径正确。**
+
+
+
 
 #### [强缓存 和 协商缓存 原理](https://www.jianshu.com/p/9c95db596df5)
 
