@@ -8,6 +8,8 @@ header-img: "img/tag-bg.jpg"
 tags:
   - Java
   - 中间件
+
+
 ---
 
 
@@ -18,7 +20,7 @@ tags:
 
 #### RabbitMQ
 
-![1](2021-07-27-RabbitMQ.assets/1-16811141913015.png)
+<img src="../../../../../img/notes/RabbitMQ/1.png">
 
 流程：就是发送方 将消息发送到交换机，交换机通过对应的Routing Key，将数据发送到对应的Queue，然后由Consumer来进行取消息。
 
@@ -80,7 +82,7 @@ RabbitMQ包括五种队列模式，简单队列、工作队列、发布/订阅�
 
 （2）一个队列对应一个消费者。
 
-![2](2021-07-27-RabbitMQ.assets/2-16811141644743.png)
+<img src="../../../../../img/notes/RabbitMQ/2.png">
 
 
 
@@ -93,7 +95,7 @@ RabbitMQ包括五种队列模式，简单队列、工作队列、发布/订阅�
 
         注意:channel.basicQos(1)表示同一时刻只发送一条消息给消费者。
 
-![3](2021-07-27-RabbitMQ.assets/3.png)
+<img src="../../../../../img/notes/RabbitMQ/3.png">
 
 
 
@@ -114,7 +116,7 @@ RabbitMQ包括五种队列模式，简单队列、工作队列、发布/订阅�
 
         注意：交换机本身没有存储消息的能力，消息只能存储到队列中。
 
-![4](2021-07-27-RabbitMQ.assets/4.png)
+<img src="../../../../../img/notes/RabbitMQ/4.png">
 
 
 
@@ -129,7 +131,7 @@ RabbitMQ包括五种队列模式，简单队列、工作队列、发布/订阅�
 
 （3）生产者发送消息时指定路由键，这时，消息只会发送到绑定的key的对应队列中。
 
-![5](2021-07-27-RabbitMQ.assets/5.png)
+<img src="../../../../../img/notes/RabbitMQ/5.png">
 
 
 
@@ -140,7 +142,7 @@ RabbitMQ包括五种队列模式，简单队列、工作队列、发布/订阅�
 
  绑定队列到交换机指定key时，进行通配符模式匹配。
 
-![6](2021-07-27-RabbitMQ.assets/6.png)
+<img src="../../../../../img/notes/RabbitMQ/6.png">
 
 
 
@@ -150,7 +152,7 @@ Direct Exchange 直连交换机
 
 完全匹配，单播模式。当Routing Key与binding Key 一致时，交换机就会将消息发送到对应的Queue中。路由键与队列名完全匹配，如果一个队列绑定到交换机要求路由键为“dog”，则只转发 routing key 标记为“dog”的消息，不会转发“dog.puppy”，也不会转发“dog.guard”等等。
 
-![7](2021-07-27-RabbitMQ.assets/7.png)
+<img src="../../../../../img/notes/RabbitMQ/7.png">
 
 
 
@@ -158,7 +160,7 @@ Fanout Exchange 扇形交换机
 
 全部发送。不需要考虑交换机Routing Key与 binding Key的关系，每个发送到该交换机的消息，都会被他发送到所有与他进行关联的Queue上。
 
-![8](2021-07-27-RabbitMQ.assets/8.png)
+<img src="../../../../../img/notes/RabbitMQ/8.png">
 
 
 
@@ -171,7 +173,7 @@ Topic Exchange 主题交换机
 
 如下图
 
-![9](2021-07-27-RabbitMQ.assets/9.png)
+<img src="../../../../../img/notes/RabbitMQ/9.png">
 
 
 
@@ -186,7 +188,7 @@ Topic Exchange 主题交换机
 #### RabbitMQ 运行和管理
 
 1. 启动
-    启动很简单，找到安装后的 RabbitMQ 所在目录下的 sbin 目录，可以看到该目录下有6个以 rabbitmq 开头的可执行文件，直接执行 rabbitmq-server 即可，下面将 RabbitMQ 的安装位置以 . 代替，启动命令就是：
+   启动很简单，找到安装后的 RabbitMQ 所在目录下的 sbin 目录，可以看到该目录下有6个以 rabbitmq 开头的可执行文件，直接执行 rabbitmq-server 即可，下面将 RabbitMQ 的安装位置以 . 代替，启动命令就是：
 
 
 
@@ -198,7 +200,7 @@ Topic Exchange 主题交换机
 
 
 
-![10](2021-07-27-RabbitMQ.assets/10.png)
+<img src="../../../../../img/notes/RabbitMQ/10.png">
 
 正常启动
 
@@ -429,12 +431,12 @@ public class Consumer {
 ```
 
 1. 运行 Consumer
-    先运行 Consumer ，这样当生产者发送消息的时候能在消费者后端看到消息记录。
+   先运行 Consumer ，这样当生产者发送消息的时候能在消费者后端看到消息记录。
 
 2. 运行 Producer
-    接着运行 Producer ,发布一条消息，在 Consumer 的控制台能看到接收的消息：
+   接着运行 Producer ,发布一条消息，在 Consumer 的控制台能看到接收的消息：
 
-   ![11](2021-07-27-RabbitMQ.assets/11.png)
+   <img src="../../../../../img/notes/RabbitMQ/11.png">
 
 
 

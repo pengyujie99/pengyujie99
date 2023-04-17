@@ -9,6 +9,7 @@ tags:
     - Java
     - SpringBoot
     - 中间件
+
 ---
 
 >ElasticSearch（es）是一个可以处理大量数据的分布式的搜索分析引擎，它是面向文档，一切都JSON。
@@ -32,31 +33,34 @@ tags:
 ### 解决可视化问题  安装 head
 
 再配置文件中进行配置跨域，然后重启。
-![image-20230410161747401](2021-05-16-ElasticSearch.assets/image-20230410161747401.png)
+<img src="../../../../../img/notes/es/2.png" >
 
 
 到gitee下载elasticsearch head插件可视化 进入head文件
+
 ```linux
 cnpm install 
 npm run start
 ```
-![image-20230410161757299](2021-05-16-ElasticSearch.assets/image-20230410161757299.png)
+
+<img src="../../../../../img/notes/es/3.png" >
 访问localhost：9100 去访问9200 如下则成功！！
-![image-20230410161804672](2021-05-16-ElasticSearch.assets/image-20230410161804672.png)
+<img src="../../../../../img/notes/es/4.png" >
 
 ### 安装kibanna
 
 1、官网下载，解压即可使用，
 其中汉化可以在yml里面配置
-![image-20230410161811654](2021-05-16-ElasticSearch.assets/image-20230410161811654.png)
+<img src="../../../../../img/notes/es/5.png" >
 2、运行
 3、访问
-![image-20230410161817375](2021-05-16-ElasticSearch.assets/image-20230410161817375.png)
+<img src="../../../../../img/notes/es/6.png" >
 可以在这里进行索引的管理。
 
 ### es与mysql
 
 现在可以将es的索引理解为一个"数据库"
+
 ```sql
 索引	 数据库
 types	 表
@@ -69,22 +73,29 @@ fields   字段
 Put更新/Get查询/Delete删除/Post新增
 
 Put更新
+
 ```java
 post /索引名/类型名/文档id/_update
 {请求体}
 put /索引名/类型名/文档id
 ```
+
 Get查询
+
 ```java
 get /索引名/类型名/文档id 通过文档id查询
 get/索引名/类型名/文档id/_search  查询所有数据
 post/索引名/类型名/_search?name:"zhangsan"  查询name为张三的数据
 ```
+
 Delete删除
+
 ```java
 delete /索引名/类型名/文档id
 ```
+
 Post新增
+
 ```java
 post /索引名/类型名
 put /索引名/类型名/文档id
@@ -94,6 +105,7 @@ put /索引名/类型名/文档id
 ## 仿京东搜索与springboot整合
 
 ### 一、创建springboot项目时选择es，额外导入依赖。
+
 ```xml
  <!-- 阿里fastjson包JSON转换-->
         <dependency>
@@ -109,7 +121,9 @@ put /索引名/类型名/文档id
             <version>1.13.1</version>
         </dependency>
 ```
+
 ### 二、编写实体类和HtmlParseUtil工具类。
+
 ```java
 @Data
 @NoArgsConstructor
@@ -120,6 +134,7 @@ public class Content {
     private String price;
 }
 ```
+
 ```java
 public class HtmlParseUtil {
     public List<Content> parseJD(String keywords) throws IOException {
@@ -151,6 +166,7 @@ public class HtmlParseUtil {
 ```
 
 ### 三、编写业务Service和Controller将爬取的数据以实体类形式存储到索引以及查询高亮显示。
+
 ```java
 @Service
 public class ContentService {
@@ -215,6 +231,7 @@ public class ContentService {
     }
 }
 ```
+
 ```java
 @RestController
 public class ContentController {
@@ -239,215 +256,5 @@ public class ContentController {
     }
 }
 ```
-![image-20230410161828470](2021-05-16-ElasticSearch.assets/image-20230410161828470.png)
 
-
-
-
-
-
-
-
-
-## SpringBoot快速整合
-
-首先已经启动了对应的elasticsearch
-
-1.导入对应依赖
-
-pom.xml文件配置
-
-~~~xml
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.0</version>
-        <relativePath/> <!-- lookup parent from repository -->
-    </parent>
-    <groupId>com.example</groupId>
-    <artifactId>elasticsearch</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>elasticsearch</name>
-    <description>Demo project for Spring Boot</description>
-    <properties>
-        <java.version>1.8</java.version>
-        <elasticsearch.version>7.17.3</elasticsearch.version>
-    </properties>
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!--es-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>1.2.47</version>
-        </dependency>
-    </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
-</project>
-~~~
-
-
-
-
-
-2.项目代码
-
-~~~yml
-spring:
-  elasticsearch:
-    uris: 127.0.0.1:9200
-
-
-  #musql
-  datasource:
-    url: jdbc:mysql://localhost:3306/a_excel?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8
-    username: root
-    password: 123456
-    driver-class-name: com.mysql.cj.jdbc.Driver
-
-~~~
-
-
-
-~~~java
-package com.example.elasticsearch.document;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
-
-@Document(indexName = "product",createIndex = true)
-@Data
-@AllArgsConstructor
-public class Product {
-    @Id
-    @Field(type = FieldType.Integer,store = true,index = true)
-    private Integer id;
-    @Field(type = FieldType.Text,store = true,index = true,analyzer = "ik_max_word",searchAnalyzer = "ik_max_word")
-    private String productName;
-    @Field(type = FieldType.Text,store = true,index = true,analyzer = "ik_max_word",searchAnalyzer = "ik_max_word")
-    private String productDesc;
-
-}
-~~~
-
-
-
-~~~java
-package com.example.elasticsearch.repository;
-
-import com.example.elasticsearch.document.Product;
-import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
-import org.springframework.stereotype.Repository;
-
-@Repository
-public interface ProductRepository extends ElasticsearchRepository<Product,Integer> {
-
-}
-
-~~~
-
-
-
-3.测试
-
-~~~java
-package com.example.elasticsearch;
-
-import com.example.elasticsearch.document.Product;
-import com.example.elasticsearch.repository.ProductRepository;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.Optional;
-
-@SpringBootTest
-class ElasticsearchApplicationTests {
-    @Autowired
-    private ProductRepository repository;
-
-
-    //新建文档
-    @Test
-    public void addDocument(){
-        Product product = new Product(1, "小米手机", "暖手宝");
-        repository.save(product);
-    }
-    //更新文档
-    @Test
-    public void updateDocument(){
-        Product product = new Product(1, "小米手机2", "暖手宝2");
-        repository.save(product);
-    }
-    //查询所有文档
-    @Test
-    public void findAllDocument(){
-        Iterable<Product> all = repository.findAll();
-        for (Product product : all) {
-            System.out.println(product);
-        }
-    }
-    //根据id查询文档
-    @Test
-    public void findDocumentById(){
-        Optional<Product> product = repository.findById(1);
-        System.out.println(product.get());
-    }
-    //根据id删除文档
-    @Test
-    public void deleteDocument(){
-        repository.deleteById(1);
-    }
-}
-~~~
-
-
-
+<img src="/img/notes/es/7.png" >

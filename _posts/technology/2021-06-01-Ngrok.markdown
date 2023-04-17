@@ -10,6 +10,7 @@ tags:
     - NAT
     - 图标
 
+
 ---
 
 ### 内网穿透
@@ -34,7 +35,7 @@ tags:
 
 我是用的github直接登入，复制身份令牌
 
-![1](D:\Typora\Blog\pengyujie99.github.io\_posts\technology\2021-06-01-Ngrok.assets\1.png)
+<img src="../../../../../img/notes/ngrok/1.png">
 
 
 
@@ -58,7 +59,7 @@ ngrok http 9090
 
 成功
 
-![2](D:\Typora\Blog\pengyujie99.github.io\_posts\technology\2021-06-01-Ngrok.assets\2.png)
+<img src="../../../../../img/notes/ngrok/2.png">
 
 
 

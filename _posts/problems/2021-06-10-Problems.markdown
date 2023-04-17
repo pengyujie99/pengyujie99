@@ -258,13 +258,13 @@ List<Map> list =new ArrayList<>();
 
 
 
-![1](D:\Typora\Blog\pengyujie99.github.io\_posts\problems\2021-06-10-Problems.assets\1.png)
+![1](\img\notes\problems\1.png)
 
 
 
 #### Redis多路复用
 
-![2](D:\Typora\Blog\pengyujie99.github.io\_posts\problems\2021-06-10-Problems.assets\2.png)
+![2](D\img\notes\problems\2.png)
 
 
 
@@ -613,7 +613,7 @@ GRANT CREATE TABLE TO user_name--授权给用户
 
 全称 Service Provider Interface，一种服务发现机制。
 
-![img](D:\Typora\Blog\pengyujie99.github.io\_posts\problems\2021-06-10-Problems.assets\image.png)
+![img](\img\notes\problems\image.png)
 
 ##### 缺点
 

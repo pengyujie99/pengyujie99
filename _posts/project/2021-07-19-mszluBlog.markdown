@@ -4,10 +4,11 @@ title:      "Blog Program"
 subtitle:   "Blog项目的笔记心得"
 date:       2021-07-19 12:00:00
 author:     "Pengyujie"
-header-img: "img/tag-bg.jpg"
+header-img: "img/post-bg-rwd.jpg"
 tags:
     - Java
     - SpringBoot
+
 
 ---
 
@@ -27,7 +28,7 @@ tags:
 
 在ThreadLocal中是kv保存的，k是弱引用，v是强引用。当内存不足时，弱引用被回收，强引用还在，这时候由于k没了，v就会被永远存在
 
-![1](2021-07-19-mszluBlog.assets/1.jpg)
+![ThreadLocal](2021-07-19-mszluBlog.assets/1-16817281789301.jpg)
 
 ```java
 package com.pengyujie.blogapi.utils;
@@ -1041,7 +1042,7 @@ C:\Users\pengyujie\IdeaProjects\MD_five\src\main\java\com\example\demo\kuangstud
 
 JavaDoc文档生成完毕
 
-![2](2021-07-19-mszluBlog.assets/2.png)
+<img src="../../../../../img/notes/Blog/2.png">
 
 
 
@@ -1091,7 +1092,7 @@ public class Test {
 
 运行效果：
 
-![3](2021-07-19-mszluBlog.assets/3.png)
+<img src="../../../../../img/notes/Blog/3.png">
 
 
 
@@ -1121,7 +1122,7 @@ public class Test {
 
 将每个文件夹分开（如下），再次执行 成功。很简单的错误，却搞了几个小时。
 
-![4](2021-07-19-mszluBlog.assets/4.png)
+<img src="../../../../../img/notes/Blog/4.png">
 
 
 
@@ -1129,7 +1130,7 @@ public class Test {
 
 - 报错：Cause: com.mysql.cj.jdbc.exceptions.MysqlDataTruncation: Data truncation: Out of range value for column 'article_id' at row 1
 
-![5](2021-07-19-mszluBlog.assets/5.png)
+<img src="../../../../../img/notes/Blog/5.png">
 
 超出界限   原因一般是二种：一种是值为-1，一种值过大。
 
@@ -1145,13 +1146,13 @@ public class Test {
 
 src变为springboot项目
 
-![6](2021-07-19-mszluBlog.assets/6.png)
+<img src="../../../../../img/notes/Blog/6.png">
 
 
 
 pom变为springboot的pom
 
-![7](2021-07-19-mszluBlog.assets/7.jpg)
+<img src="../../../../../img/notes/Blog/7.jpg">
 
 
 

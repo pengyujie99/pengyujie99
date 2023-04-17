@@ -9,7 +9,9 @@ catalog: true
 tags:
     - Docker
     - Java
+
 ---
+
 > Docker容器化技术  
 >
 > 为了解决环境以及配置为问题。  
@@ -77,7 +79,7 @@ systemctl start docker
 docker version
 ```
 
-![image-20230410162124731](2021-02-19-Docker.assets/image-20230410162124731.png)
+<img src="../../../../../img/notes/docker/1.png" >
 
 
 
@@ -90,7 +92,7 @@ docker run -d hello-world
 
 ```
 
-![image-20230410162128306](2021-02-19-Docker.assets/image-20230410162128306.png)
+<img src="../../../../../img/notes/docker/2.png" >
 
 
 
@@ -98,7 +100,7 @@ docker run -d hello-world
 
 ## Docker常用命令
 
-![image-20230410162130797](2021-02-19-Docker.assets/image-20230410162130797.png)
+<img src="../../../../../img/notes/docker/3.png" >
 
 ```shell
 docker info #查看docker的系统信息
@@ -235,7 +237,7 @@ curl localhost：3344 #查看情况
 
 外网访问 虚拟机3344端口
 
-![image-20230410162136927](2021-02-19-Docker.assets/image-20230410162136927.png)
+<img src="../../../../../img/notes/docker/5.png" >
 
 ### 部署Tomcat
 
@@ -247,7 +249,7 @@ docker exec -it tomcat01 #进入容器查看
 cp -r webapps.dist/* webapps#需要将webapps.dist的文件移入webapps，此时则可以访问
 ```
 
-![image-20230410162139484](2021-02-19-Docker.assets/image-20230410162139484.png)
+<img src="../../../../../img/notes/docker/6.png" >
 
 ### 部署es和kibanna
 
@@ -261,7 +263,7 @@ curl localhost:9200
 
 访问
 
-![7](D:\Typora\Blog\pengyujie99.github.io\_posts\technology\2021-02-19-Docker.assets\7.png)
+<img src="../../../../../img/notes/docker/7.png" >
 
 ### Docker可视化面板Portainer安装
 
@@ -279,7 +281,7 @@ docker run -d -p 8088:9000 --restart=always -v /var/run/docker.sock:/var/run/doc
 
 然后创建管理员，选择local连接，就会出现如下界面
 
-![image-20230410162144224](2021-02-19-Docker.assets/image-20230410162144224.png)
+<img src="../../../../../img/notes/docker/8.png" >
 
 
 
@@ -359,7 +361,7 @@ MYSQL_ROOT_PASSWORD=123456 --name mysql01 mysql:5.7
 
 windows的navicat连接到Linux容器中的mysql
 
-![image-20230410162150201](2021-02-19-Docker.assets/image-20230410162150201.png)
+<img src="../../../../../img/notes/docker/9.png" >
 
 具名挂载和匿名挂载
 
@@ -409,7 +411,7 @@ docker build -f /home/pengyujie/docker/dockerfile -t pengyujie/centos:1.0 . #生
 docker images #查看
 ```
 
-![image-20230410162154105](2021-02-19-Docker.assets/image-20230410162154105.png)
+<img src="../../../../../img/notes/docker/10.png" >
 
 实现容器间的数据共享`--volumes-from`
 
@@ -479,11 +481,11 @@ CMD /bin/bash
 
 
 
-![image-20230410162157437](2021-02-19-Docker.assets/image-20230410162157437.png)
+<img src="../../../../../img/notes/docker/11.png" >
 
 可以利用docker history 镜像id 进行查看这个镜像如何创建
 
-![image-20230410162159889](2021-02-19-Docker.assets/image-20230410162159889.png)
+<img src="../../../../../img/notes/docker/12.png" >
 
 
 
@@ -505,7 +507,7 @@ Login Succeeded
 docker push pengyujie99/mycentos:2.0#用户名必须与你docker账户名相同 在这里使用pengyujie会失败
 ```
 
-![image-20230410162203108](2021-02-19-Docker.assets/image-20230410162203108.png)
+<img src="../../../../../img/notes/docker/13.png" >
 
 
 
@@ -521,7 +523,7 @@ veth-pair：是一对虚拟设备接口，都是成对出现，一段连着协�
 
 - 虚拟机：
 
-![image-20230410162205493](2021-02-19-Docker.assets/image-20230410162205493.png)
+<img src="../../../../../img/notes/docker/14.png" >
 
 - tomcat01：
 
@@ -553,7 +555,7 @@ root@2fad426b2abf:/usr/local/tomcat# ip addr
 
 - 容器之间ping的通
 
-  ![image-20230410162208421](2021-02-19-Docker.assets/image-20230410162208421.png)
+  <img src="../../../../../img/notes/docker/15.png" >
 
 
 

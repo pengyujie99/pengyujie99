@@ -8,6 +8,7 @@ header-img: "img/tag-bg.jpg"
 tags:
     - Java
     - 笔记
+
 ---
 
 > Maven  JDK 
@@ -37,14 +38,15 @@ D:\Maven\apache-maven-3.6.3\conf\settings 进行编辑添加
 	<mirrorOf>central</mirrorOf>
 </mirror>
 ```
+
 <br>在idea中进行配置
 <br>在Settings 中的maven进行配置
-![image-20230410162002322](2021-03-01-maven.assets/image-20230410162002322.png)
-<br>想在进行其他project时不需要进行配置（更改idea打开新项目默认配置)，需要在Settings for New Project配置
-![image-20230410162009968](2021-03-01-maven.assets/image-20230410162009968.png)
+<img src="../../../../../img/notes/maven1.png" >
+<br>想在进行其他project时不需要进行配置（更改idea打开新项目默认配置），需要在Settings for New Project配置
+<img src="../../../../../img/notes/maven2.png" >
 
 
 
 
 
-![image-20230410162017597](2021-03-01-maven.assets/image-20230410162017597.png)
+![image-20220809100225649](D:\Typora\Blog\pengyujie99.github.io\_posts\read_sf_plf\2021-03-01-maven.assets\image-20220809100225649.png)

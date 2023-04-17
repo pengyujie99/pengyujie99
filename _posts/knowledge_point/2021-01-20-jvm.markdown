@@ -8,10 +8,12 @@ header-img: "img/tag-bg.jpg"
 tags:
     - JVM
     - Java
+
 ---
+
 >对JVM的初步认识。
 
-![blog-desktop](2021-01-20-jvm.assets/blog-desktop.jpg)
+<img src="../../../../../img/notes/blog-desktop.jpg" >
 
 
 
@@ -35,7 +37,7 @@ tags:
 
 ​	* 本地库接口
 
-![img](D:\Typora\Blog\pengyujie99.github.io\_posts\read_sf_lf\2021-01-20-jvm.assets\jvm.png)
+![img](../../../../../img/notes/jvm/jvm.png)
 
 
 
@@ -69,7 +71,7 @@ Java程序首先被编译成.class文件
 <b>双亲委派机制</b>
 new一个类之后当前加载器就会将其抛给父类 一层一层抛给boot加载器进行查询。
 boot加载器没有，就给下一级ext加载器查询，没有再给app加载器查询，过程中只要查询到就执行。
-![img](D:\Typora\Blog\pengyujie99.github.io\_posts\read_sf_lf\2021-01-20-jvm.assets\jvm_1.png)
+![img](../../../../../img/notes/jvm/jvm_1.png)
 
 
 
@@ -145,7 +147,7 @@ boot加载器没有，就给下一级ext加载器查询，没有再给app加载�
 
 ## 栈的使用
 
-![img](D:\Typora\Blog\pengyujie99.github.io\_posts\read_sf_lf\2021-01-20-jvm.assets\3545372a9e7dfce400d1d1255f0633d8.png)
+![img](../../../../../img/notes/jvm/3545372a9e7dfce400d1d1255f0633d8.png)
 
 ---
 

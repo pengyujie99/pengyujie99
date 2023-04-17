@@ -14,6 +14,7 @@ tags:
     - 集合
     - 正则
 
+
 ---
 
 >对网络编程等的回顾。
@@ -1613,7 +1614,7 @@ public class Monitor {
 
 效果如下图：
 
-![1](D:\Typora\Blog\pengyujie99.github.io\_posts\knowledge_point\2021-07-18-Review.assets\1.png)<img src="D:\Typora\Blog\pengyujie99.github.io\img\notes\review\1.png" alt="1" style="zoom:80%;" />
+<img src="../../../../../img/notes/review/1.png" >
 
 
 

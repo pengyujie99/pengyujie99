@@ -8,12 +8,14 @@ header-img: "img/tag-bg.jpg"
 tags:
     - HashMap
     - Java
+
 ---
+
 >众所周知，HashMap是一个用于存储键值对的集合，
 >HashMap是   数组＋链表+红黑树   结构而在HashMap中使用最多的大概是，Put和Get方法来进行存储和获取。
 >HashMap数组每一个元素的初始值都是Null。
 
-![1](D:\Typora\Blog\pengyujie99.github.io\_posts\knowledge_point\2021-03-16-HashMap.assets\1.jpg)
+<img src="../../../../../img/notes/1.jpg" >
 
 
 
@@ -22,14 +24,14 @@ tags:
 
 进行put.("apple",0)，需要利用一个哈希函数进行确定插入位置 index = Hash("apple"),然后进行插入。
 
-<br>![2](D:\Typora\Blog\pengyujie99.github.io\_posts\knowledge_point\2021-03-16-HashMap.assets\2.jpg)
+<br><img src="../../../../../img/notes/2.jpg" >
 
 <br>但是HashMap长度是有限的，当一个index有多个值时，就会冲突，这时候就需要用到链表了，
 <br>只需要将新插入的数据插入这个index的链表即可
 
-<br>![3](D:\Typora\Blog\pengyujie99.github.io\_posts\knowledge_point\2021-03-16-HashMap.assets\3.jpg)
+<br><img src="../../../../../img/notes/3.jpg" >
 
-<br>![4](D:\Typora\Blog\pengyujie99.github.io\_posts\knowledge_point\2021-03-16-HashMap.assets\4.jpg)
+<br><img src="../../../../../img/notes/4.jpg" >
 
 <br>
 
@@ -169,6 +171,7 @@ public class HashMapSource {
 
 
 ---
+
 HashMap，LinkedHashMap，和TreeMap有什么区别？
 
 LinkedHashMap保存了记录的插入顺序，在利用lterator遍历时，
@@ -178,6 +181,7 @@ TreeMap实现了SortMap接口，能够把它保存的记录根据键排序
 （默认为按照键值升序排序，也可以指定排序的比较器）
 
 ---
+
 HashTable与HashMap
 
 HashTable的KV不允许为null，HashMap的KV可以为null。

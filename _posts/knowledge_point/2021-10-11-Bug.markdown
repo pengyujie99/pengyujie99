@@ -9,6 +9,7 @@ hidden: true
 tags:
     - Bug
     - linux
+
 ---
 
 >有前端 有后端
@@ -31,7 +32,7 @@ tags:
 
 #### 前端方法执行了 但是方法内的ajax没有执行 报错403 
 
-![2](\img\notes\bug\2.png)
+![2](../../../../../img/notes/bug/2.png)
 
 解决方法：加上请求类型contentType
 
@@ -70,7 +71,7 @@ tags:
 
 #### FileNotFoundException: xxxxx路径 (拒绝访问）)
 
-![1](D:\Typora\Blog\pengyujie99.github.io\_posts\knowledge_point\2021-10-11-Bug.assets\1.png)
+![](../../../../博客-备份/pengyujie99.github.io/_posts/hidden/img src="/img/notes/bug/1.png")
 
 原因： java无权访问文件目录 
 
@@ -94,15 +95,31 @@ tags:
 
 
 
+#### 今天做码神之路的blog项目，然后springboot一直报错
+
+> Invalid bound statement (not found): com.pengyujie.blogapi.dao.mapper.TagMapper.findHotsTagIds
+
+搞了几个小时，检查关联代码完全没有问题。发现是创建xml文件时候，前面的包都合并成了一个包使用 . 连接。
+
+解决：
+
+将每个文件夹分开（如下），再次执行 成功。很简单的错误，却搞了几个小时。
+
+<img src="../../../../../img/notes/Blog/4.png">
+
+
+
 
 
 #### 报错：Cause: com.mysql.cj.jdbc.exceptions.MysqlDataTruncation: Data truncation: Out of range value for column 'article_id' at row 1
 
-![5](D:\Typora\Blog\pengyujie99.github.io\_posts\knowledge_point\2021-10-11-Bug.assets\5.png)
+<img src="../../../../../img/notes/Blog/5.png">
 
 超出界限   原因一般是二种：一种是值为-1，一种值过大。
 
 我的是第二种，给的值过大，在数据库中将article_id的int类型转换为bigint
+
+
 
 还有一种因为精度丢失的错误，将int转换为String类型解决成功。
 
@@ -112,13 +129,13 @@ tags:
 
 src变为springboot项目
 
-![6](D:\Typora\Blog\pengyujie99.github.io\_posts\knowledge_point\2021-10-11-Bug.assets\6.png)
+<img src="../../../../../img/notes/Blog/6.png">
 
 
 
 pom变为springboot的pom
 
-![7](D:\Typora\Blog\pengyujie99.github.io\_posts\knowledge_point\2021-10-11-Bug.assets\7.jpg)
+<img src="../../../../../img/notes/Blog/7.jpg">
 
 
 

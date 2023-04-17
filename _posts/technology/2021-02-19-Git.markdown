@@ -9,12 +9,14 @@ catalog: true
 tags:
     - Git
     - Java
+
 ---
+
 > 版本控制
->就是在版本迭代，对于新旧版本的的管理（多人开发必须要使用版本控制）
->本地版本控制
->集中版本控制   svn
->分布式版本控制 Git
+> 就是在版本迭代，对于新旧版本的的管理（多人开发必须要使用版本控制）
+> 本地版本控制
+> 集中版本控制   svn
+> 分布式版本控制 Git
 
 
 <br><b>以下路径为我自己电脑</b>
@@ -50,11 +52,14 @@ help --帮助
 
 
 <p id = "build"></p>
+
 ## 使用
+
 >成功下载安装git之后
 
 <br>第一步：设置用户名邮箱 必须设置在用户配置里
 <br><b>没有这一步 可能因为没有提交者信息 无法提交</b>
+
 ```java
 19337@LAPTOP-6VTNLLB4 MINGW64 ~/Desktop
 $ git config --global user.name "pengyujie"
@@ -97,7 +102,9 @@ ok！
 ```shell
 git init ##会生成一个git文件夹
 ```
+
 <br>过程：
+
 ```shell
 $ git init
 $ git add .
@@ -108,6 +115,7 @@ $ git push -u origin main
 
 $ git remote remove origin --断开连接
 ```
+
 <br>
 <br><b>IDEA集成Git</b>
 <br>创建一个普通的springboot项目
@@ -122,7 +130,7 @@ $ git remote remove origin --断开连接
 <br>commit到仓库
 <br>push到远程仓库
 <br>
-![image-20230410162059162](2021-02-19-Git.assets/image-20230410162059162.png)
+<img src="../../../../../img/notes/5.png" >
 
 
 ## 扩展
@@ -148,6 +156,7 @@ $ git branch        --查看分支
 $ git checkout newbranch--切换到newbranch分支
 $ git branch -d newbranch        --删除分支newbranch
 ```
+
 提取拉取 github/gitee上的数据
 
 ~~~shell
@@ -172,17 +181,24 @@ $ git push -u origin main
 
 $ git remote remove origin --断开连接
 ```
+
 ## 从零开始拉取提交一个项目到gitee
+
 <br>1.首先拉取
+
 ```shell
 #拉取远程仓库main分支
 $ git clone -b main https://gitee.com/peng-yujie/peng-yujie.git
 ```
+
 <br>2.初始化
+
 ```shell
 git init
 ```
+
 <br>3.提交三步曲
+
 ```shell
 git add .
 git commit -m "message"

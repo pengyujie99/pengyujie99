@@ -9,6 +9,7 @@ tags:
   - 笔记
   - 基础
   - 网络编程
+
 ---
 
 >HTTP与HTTPS的关系？访问一个网站的过程？DNS？...
@@ -89,11 +90,13 @@ socket并不是一个协议，它只是封装了TCP/IP协议，它是一组调�
 
 
 ## 访问一个网站
+
 ```
 用户访问一个网站，输入其域名进访问，首先在自身缓存中查看有没有解析过这个域名，有则返回，
 没有则通过DNS解析，计算机的DNS（这个DNS可以自己设置，在C盘的hosts的文件），相当于一个邮
 局，你将你所需要的连接的网站的域名给它，由他进行解析返回给你IP地址。这时候你就可以访问了
 ```
+
 访问一个网站的过程：
 
 1、输入一个域名；回车
@@ -126,6 +129,7 @@ socket并不是一个协议，它只是封装了TCP/IP协议，它是一组调�
 
 
 ## HTTP和HTTPS
+
 HTTP缺点：
 
 - 请求信息明文传输，容易被窃听截取。
@@ -156,6 +160,7 @@ HTTPS
 4.服务器利用自己的私钥解密出主秘钥MS。
 5.服务器利用主秘钥MS加密与客户端之间的通信。
 ```
+
 区别：  
 
 HTTPS是HTTP协议的安全版本，HTTP协议的数据传输是明文的，是不安全的，HTTPS使用了SSL/TLS协议进行了加密处理。（TLS实际就是SSL3.0之后的后续版本）  
@@ -168,11 +173,11 @@ http和https使用连接方式不同，默认端口也不一样，http是80，ht
 
 - 三次握手
 
-![1](D:\Typora\Blog\pengyujie99.github.io\_posts\knowledge_point\2020-06-19-network-programming.assets\1.png)
+<img src="../../../../../img/notes/net/1.png">
 
 - 四次挥手
 
-![2](D:\Typora\Blog\pengyujie99.github.io\_posts\knowledge_point\2020-06-19-network-programming.assets\2.png)
+<img src="../../../../../img/notes/net/2.png">
 
 
 

@@ -12,6 +12,7 @@ tags:
     - 中间件
 
 
+
 ---
 
 ## Dubbo
@@ -20,7 +21,7 @@ tags:
 
 
 
-![image-20230410161722485](2021-08-16-Dubbo.assets/image-20230410161722485.png)
+<img src="https://dubbo.apache.org/imgs/architecture.png" alt="img" style="zoom: 50%;" />
 
 **节点角色说明：**
 

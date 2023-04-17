@@ -10,6 +10,7 @@ tags:
   - Java
   - debug
   - IDEA
+
 ---
 
 > Debug调试
@@ -26,7 +27,7 @@ Debug调试的功能主要对应着两组按钮：
 
 　　1、首先说第一组按钮，共8个按钮，从左到右依次如下：
 
-![1](D:\Typora\Blog\pengyujie99.github.io\_posts\knowledge_point\2021-09-27-Debug.assets\1.jpg)
+![](../../../../../img/notes/debug/1.jpg)
 
 　　　　> Show Execution Point (Alt + F10)：如果你的光标在其它行或其它页面，点击这个按钮可跳转到当前代码执行的行。
 
@@ -46,7 +47,7 @@ Debug调试的功能主要对应着两组按钮：
 
 　　2、第二组按钮，共7个按钮，从上到下依次如下：
 
-![2](D:\Typora\Blog\pengyujie99.github.io\_posts\knowledge_point\2021-09-27-Debug.assets\2.jpg)
+![](../../../../../img/notes/debug/2.jpg)
 
 　　　　> Rerun 'xxxx'：重新运行程序，会关闭服务后重新启动程序。
 
@@ -61,8 +62,4 @@ Debug调试的功能主要对应着两组按钮：
 　　　　> View Breakpoints (Ctrl + Shift + F8)：查看所有断点，后面章节会涉及到。
 
 　　　　> Mute Breakpoints：哑的断点，选择这个后，所有断点变为灰色，断点失效，按F9则可以直接运行完程序。再次点击，断点变为红色，有效。如果只想使某一个断点失效，可以在断点上右键取消Enabled，如图2.4，则该行断点失效。
-
-
-
-`使用debug模式 需要debug模式启动`
 
