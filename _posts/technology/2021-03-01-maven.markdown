@@ -49,4 +49,4 @@ D:\Maven\apache-maven-3.6.3\conf\settings 进行编辑添加
 
 
 
-![image-20220809100225649](D:\Typora\Blog\pengyujie99.github.io\_posts\read_sf_plf\2021-03-01-maven.assets\image-20220809100225649.png)
+<img src="../../../../../img/notes/3.png" >

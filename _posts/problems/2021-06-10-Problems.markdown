@@ -1,13 +1,12 @@
 ---
 layout:     post
 title:      "问题"
-subtitle:   "Java问题集合"
+subtitle:   "Java面试问题"
 date:       2021-06-10
 author:     "Pengyujie"
 header-img: "img/tag-bg.jpg"
-hidden: true
 tags:
-  - Java
+  - Java面试
   - 笔记
 
 ---

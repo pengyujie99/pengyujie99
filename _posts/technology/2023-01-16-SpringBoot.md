@@ -15,9 +15,24 @@ tags:
 
 ---
 
-## 
+
 
 ## SpringBoot
+
+
+
+### 自动配置原理
+
+因此springboot底层实现自动配置的步骤是：
+
+springboot应用启动；
+
+- @SpringBootApplication起作用 @SpringBootApplication是一个联合注解；
+- @EnableAutoConfiguration起作用；
+- @AutoConfigurationPackage：这个组合注解主要是@Import(AutoConfigurationPackages.Registrar.class)，它通过将Registrar类导入到容器中，而Registrar类作用是扫描主配置类同级目录以及子包，并将相应的组件导入到springboot创建管理的容器中；
+- @Import(AutoConfigurationImportSelector.class)：它通过将AutoConfigurationImportSelector类导入到容器中，AutoConfigurationImportSelector类作用是通过selectImports方法实现将配置类信息交给SpringFactory加载器进行一系列的容器创建过程（SPI）
+
+
 
 ### 最先执行
 
@@ -104,7 +119,7 @@ CommandLineRunner和ApplicationRunner 默认是ApplicationRunner先执行，如�
 
 
 
-![\img\notes\3.png)
+![/img/notes/springboot/3.png)
 
 
 
@@ -266,9 +281,9 @@ JVM环境变量>操作系统环境变量>properties文件环境变量>yml文件�
 
 #### 不同配置文件：
 
-![image-20220720094400031](\img\notes\1.png)
+![image-20220720094400031](/img/notes/springboot/1.png)
 
-![image-20220720094400031](\img\notes\2.png)
+![image-20220720094400031](/img/notes/springboot/2.png)
 
 指定生效配置文件即可
 
@@ -342,10 +357,6 @@ IOC和AOP的实现原理与理解
 spring的学习是看的周瑜老师的视频，如果不清楚可以看下周瑜老师的高级spring底层原理源码教程
 
 [周瑜老师的思维导图笔记](https://www.processon.com/view/5fb7681f7d9c0857dda6f740)  
-
-
-
-
 
 
 
@@ -462,7 +473,7 @@ spring的学习是看的周瑜老师的视频，如果不清楚可以看下周�
 
 
 
-![image-20220720094400031](\img\notes\4.png)
+![image-20220720094400031](/img/notes/springboot/4.png)
 
 
 

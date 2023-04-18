@@ -2,13 +2,12 @@
 layout:     post
 title:      "小BUg库"
 subtitle:   "遇到的一些小问题解决方法"
-date:       2021-05-13
+date:       2021-10-11
 author:     "Pengyujie"
 header-img: "img/tag-bg.jpg"
 hidden: true
 tags:
     - Bug
-    - linux
 
 ---
 
