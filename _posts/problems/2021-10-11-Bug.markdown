@@ -200,6 +200,16 @@ Set<Map.Entry<String, Object>> entries = map.entrySet();
 
 
 
+### 内存泄漏
+
+windows环境 可以生成dump（可以任务管理器生成转储文件）然后使用内存分析工具进行分析包括 visual mat 等等
+
+linux环境 使用命令生成dump 然后使用工具进行分析
+
+也都可以启动的时候通过命令，当出现内存溢出的时候自动生成dump文件
+
+实际内存泄漏排查，主要的就是生成对应的dump然后通过工具排查定位。
+
 
 
 

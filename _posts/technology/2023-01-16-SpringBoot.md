@@ -10,9 +10,6 @@ tags:
     - springboot
     - Java
 
-
-
-
 ---
 
 
@@ -119,7 +116,7 @@ CommandLineRunner和ApplicationRunner 默认是ApplicationRunner先执行，如�
 
 
 
-![/img/notes/springboot/3.png)
+![3](/img/notes/springboot/3.png)
 
 
 

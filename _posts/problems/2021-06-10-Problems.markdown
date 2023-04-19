@@ -60,6 +60,51 @@ public class Reverse {
 
 
 
+#### 线程池状态
+
+```
+线程池：running shutdown(不接收新任务，处理已添加的任务) stop(不接收新任务，不处理已添加的任务) tidying(所有的任务已终止) terminate
+```
+
+
+
+#### 线程池
+
+```
+* 七大参数：核心线程数 最大线程数 拒绝策略 队列 非核心线程存活时间 非核心线程存活时间单位 线程工厂
+* 四种拒绝策略： 丢弃并直接抛出异常 丢弃不抛出异常 丢弃掉最队列最前面的任务然后重新提交被拒绝的任务 拒绝但是由提交任务的线程直接执行此任务
+* 线程池原理实际就是将线程与任务解耦 线程创建出来之后会去执行循环任务(去查看是否有需要执行的任务,有就调run方法去执行,没有就继续循环去查看)
+
+* 线程之间的通讯方式：
+         * 1 根据volatile关键字 保证有序性和可见性
+         * 2 Object的wait() 和 notify() notifyAll()方法
+         * 3 Condition的await() 和 signal() signalAll()方法
+```
+
+
+
+#### RabbitMQ 消息中间件保证消息被消费
+
+```
+* 为防止消息丢失
+* 生产者->MQ  可以采用confirm 即生产者发送消息到MQ MQ需要进行响应,生产者就知道MQ已经接收到信息才进行删除对应的消息
+* MQ自身的持久化
+* MQ->消费者 ack机制 同样消费者消费之后需要进行响应MQ MQ才知道消费者已经消费,才会进行删除
+```
+
+
+
+#### **spring mvc的五大组件**
+
+DispatchServlet  HandlerMaping  Controller ViewResolve ModelAndView
+
+```
+springmvc执行流程:
+springmvc过程 首先一个请求过来 dispatchservelet会先去根据path查到对应的handler（也就是对应的接口方法）然后调用控制器controller去调用service方法去进行处理请求,如果是json格式则直接返回浏览器 如果不是则将得到的modelAndView返回给前端控制器DispatchServelet  DispatchServelet 再将他传给ViewResolve进行解析，最后将解析结果返给View然后返给浏览器
+```
+
+
+
 #### **创建对象的几种方式**
 
 1、直接new对象 。 2、利用反射获取class，调用newInstance()方法创建对象。  3、可以调用Constructor类的nnewInstance()方法来创建。4、反序列。
@@ -68,7 +113,7 @@ public class Reverse {
 
 #### **spring ioc的几种注入方式**
 
-1、setter注入。 2、接口注入。 3、构造器注入。
+1、setter注入  2、接口注入  3、构造器注入
 
 
 
@@ -83,12 +128,6 @@ public class Reverse {
 　　3、幻读：系统管理员A将数据库中所有学生的成绩从具体分数改为ABCDE等级，但是系统管理员B就在这个时候插入了一条具体分数的记录，当系统管理员A改结束后发现还有一条记录没有改过来，就好像发生了幻觉一样，这就叫幻读。
 
 　　**小结：不可重复读的和幻读很容易混淆，不可重复读侧重于修改，幻读侧重于新增或删除。解决不可重复读的问题只需锁住满足条件的行，解决幻读需要锁表**
-
-
-
-#### **spring mvc的五大组件**
-
-DispatchServlet  HandlerMaping  Controller ViewResolve ModelAndView
 
 
 
@@ -263,7 +302,7 @@ List<Map> list =new ArrayList<>();
 
 #### Redis多路复用
 
-![2](D\img\notes\problems\2.png)
+![2](\img\notes\problems\2.png)
 
 
 
