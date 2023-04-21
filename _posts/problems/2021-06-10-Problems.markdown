@@ -756,6 +756,62 @@ Redis 是对key设置有效期解决死锁现象
 
 
 
+#### bean的作用域
+
+单例作用域(唯一bean实例，由Spring容器管理其生命周期)
+
+原型作用域(原型bean，创建后容器不管理其生命周期)
+
+request作用域(每次http都产生新的bean，仅在http request内有效)
+
+session作用域(首次http请求创建一个实例，作用域是浏览器首次访问直至浏览器关闭)
+
+全局作用域（在⼀个http servlet Context中，定义⼀个Bean实例）
+
+
+
+#### redis和MongoDB的区别
+
+二者都是nosql
+
+redis支持多种数据类型包括hash，string，set，sortset，list等等，MongoDB只有一种文档类型，可以直接支持json格式存储，更为方便大量数据的存储。
+
+对事物的支持，redis支持简单的事务，而MongoDB不支持
+
+简单来说 redis适合数据的快速访问，MongoDB适合海量数据的查询和分析
+
+
+
+#### hashmap和hashtable
+
+hashmap是基于数组+链表+红黑树，hashtable是基于数据+链表的
+
+前者是非线程安全，后者线程安全；前者允许null作为键值，后者不允许
+
+hashtable方法都使用了synchronized修饰
+
+
+
+#### jvm模型图 jdk1.8
+
+![img](\img\notes\problems\jvm1.8.png)
+
+
+
+
+
+#### b树和b+树
+
+b+树在b数基础上叶子结点增加了双向链表，可以快速进行范围查询
+
+且b+树叶子结点包含了所有结点，而b数叶子结点是不含父节点的
+
+b+树的结构更满足数据库的要求。
+
+
+
+方法区：存储 类信息、常量、静态变量以及即时编译器编译后的代码缓存
+
 
 
 #### 四大元注解
@@ -786,7 +842,7 @@ Redis 是对key设置有效期解决死锁现象
 
 
 
-#### 名称解释
+### 名称解释
 
 ##### 限流：限制并发的请求访问量，超过阈值则拒绝；
 
