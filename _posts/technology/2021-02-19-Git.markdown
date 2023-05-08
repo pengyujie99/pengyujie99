@@ -236,6 +236,102 @@ git remote remove new_name ##删除远程仓库new_name
 
 
 
+## git与IDEA
+
+
+
+### 配置git
+
+想要在 IDEA 中使用 Git，首先就需要在 IDEA 工具中对 Git 进行相关的配置
+
+打开 IDEA 设置，之后按照下面图片中的步骤进行操作即可。需要注意的是，在 Path Git executable 中，也就是设置 Git 可执行路径中，找到本机电脑上 Git 的安装位置，根据情况进行路径选择。
+
+![img](\img\notes\git\config.png)
+
+
+
+### 1 拉取
+
+首先确定需要拉取项目的地址然后进行拉取
+
+![img](\img\notes\git\clone1.png)
+
+
+
+
+
+![img](\img\notes\git\clone2.png)
+
+
+
+
+
+
+
+输入对应的地址，然后点击clone，按照要求再输入对应账号密码即可拉取对应的数据了
+
+
+
+### 2 使用
+
+![img](\img\notes\git\use1.png)
+
+
+
+分别是更新、提交、推送
+
+
+
+
+
+也可以在这里右键当前分支去处理，这里可以进行new新分支，也可以删除分支等等。
+
+![img](\img\notes\git\use2.png)
+
+
+
+多个commit进行合并push
+
+选中多个提交，然后右键如下选择，输入提交内容即可合并为一次push
+
+![img](\img\notes\git\use3.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
