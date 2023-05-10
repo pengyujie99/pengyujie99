@@ -214,6 +214,89 @@ linux环境 使用命令生成dump 然后使用工具进行分析
 
 
 
+### get请求参数中文乱码的解决办法
+
+发现GET请求接收参数打印出来的是乱码。本地出现乱码 ，测试环境正常。
+
+原因：
+
+Tomcat7的GET请求默认接收格式是`ISO-8859-1` 如果想接收正确格式有二种方法
+
+Tomcat8.0以上默认是`utf-8`格式不存在这个问题
+
+方法一：在tomcat的server.xml里把
+
+~~~xml
+<Connector connectionTimeout="50000" port="8080" protocol="HTTP/1.1" redirectPort="8443"/>
+
+改为
+
+<Connector connectionTimeout="50000" port="8080" protocol="HTTP/1.1" redirectPort="8443" URIEncoding="UTF-8"/>
+~~~
+
+
+
+方法二：
+
+内部转一道 将`iso-8859-1` 转为`utf-8`
+
+~~~java
+str = new String(str.getBytes("iso-8859-1"), "UTF-8");
+~~~
+
+
+
+
+
+### post请求参数中文乱码的解决办法
+
+一般不会出现，也有二种方法
+
+方法一：
+
+~~~java
+request.setCharacterEncoding("UTF-8");
+~~~
+
+
+
+
+
+方法二：
+
+~~~xml
+<filter>
+    <description>字符集过滤器</description>
+    <filter-name>encodingFilter</filter-name>
+    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+    <init-param>
+        <description>字符集编码</description>
+        <param-name>encoding</param-name>
+        <param-value>UTF-8</param-value>
+    </init-param>
+</filter>
+<filter-mapping>
+    <filter-name>encodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 [码神之路项目错误笔记][https://pengyujie99.github.io/2021/07/19/mszluBlog/]
