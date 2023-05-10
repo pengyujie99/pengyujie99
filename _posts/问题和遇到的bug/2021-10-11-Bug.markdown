@@ -264,6 +264,9 @@ request.setCharacterEncoding("UTF-8");
 
 方法二：
 
+springMVC已经提供了轮子给我们使用，在web.xml添加post乱码filter:
+在web.xml中加入
+
 ~~~xml
 <filter>
     <description>字符集过滤器</description>
