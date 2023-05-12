@@ -21,19 +21,13 @@ tags:
 
 
 
-<img src="https://dubbo.apache.org/imgs/architecture.png" alt="img" style="zoom: 50%;" />
-
 **节点角色说明：**
 
-Consumer：服务调用者
-
-Provider：服务提供者
-
-Registry：注册中心
-
-Monitor：监控中心
-
-Container：运行容器
+**Consumer：服务调用者**
+**Provider：服务提供者**
+**Registry：注册中心**
+**Monitor：监控中心**
+**Container：运行容器**
 
 
 
@@ -81,7 +75,7 @@ api模块包括基本的dao层和service接口，consumer包括controller层，p
 
 
 
-api模块
+### api模块
 
 dao层：
 
@@ -115,7 +109,7 @@ public interface UserService {
 
 
 
-consumer模块
+### consumer模块
 
 controller层：（**注入方式选择@Reference 且是dubbo的Reference** ）
 
@@ -162,7 +156,7 @@ dubbo:
 
 
 
-provider模块
+### provider模块
 
 impl层：（**@Service是dubbo的Service 后面标注版本信息和接口属性，方便注入和迭代**）
 
@@ -211,6 +205,10 @@ dubbo:
     port: 20880
     name: dubbo
 ~~~
+
+
+
+注意：dubbo可以通过@Refence 注解实现服务超时重试、集群容错策略、降级策略等。
 
 
 
