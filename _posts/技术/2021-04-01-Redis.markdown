@@ -36,7 +36,7 @@ tags:
         </li>
 		<li><b>Hash</b>
         </li>
-		<li><b>Zset</b>
+		<li><b>sort set</b>
         </li>
     </ul>
 	<ul>三种特殊的数据类型
@@ -48,6 +48,7 @@ tags:
         </li>
     </ul>
 </div>
+
 ## 主从复制和哨兵模式
 
 
