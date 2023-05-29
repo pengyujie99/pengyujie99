@@ -476,7 +476,7 @@ select * from student where student_name = ${name}
 
 而使用${}在动态解析时候，会传入参数字符串，这时候会出现sql注入问题
 
-select * from student where student_name = ` 'test' or 1=1 `
+select * from student where student_name =   'test' or 1=1  
 
 **#{}**
 
@@ -484,9 +484,7 @@ select * from student where student_name = #{name}
 
 预编译后,会动态解析成一个参数标记符? 这样传入的参数就是只会作为一个简单的字符（其中的引号会作为转义字符，从而避免了参数也作为条件的一部分）
 
-select * from student where student_name = ` '\\'test\\' or 1=1'
-
-
+select * from student where student_name = '\\'test\\' or 1=1' 
 
 
 
@@ -597,6 +595,18 @@ select * from student where student_name = ` '\\'test\\' or 1=1'
 #### [强缓存 和 协商缓存 原理](https://www.jianshu.com/p/9c95db596df5)
 
 
+
+#### MySQL为什么选B+树而不是B树
+
+B树非叶子结点也会存储数据，且父节点出现过的数据不会出现在子节点。
+
+B+树是B树的变种，B+树只有叶子结点存储数据，叶子结点包含所有数据，且相邻叶子结点使用双向指针，适合MySQL中常见的基于范围的顺序查找，而只有叶子结点存储数据，那么非叶子结点就可以存储更多的索引。在相同的磁盘 I/O 次数下，就能查询更多的节点。
+
+
+
+#### mysql保证树高度为3能存储的数据量
+
+![1](../../../../img/notes/problems/mysql.jpg)
 
 
 
