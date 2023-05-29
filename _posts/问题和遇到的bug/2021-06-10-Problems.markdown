@@ -468,15 +468,23 @@ CA 一般在单体应用 ，CP是适合银行等对于一致性要求高的，AP
 
 我们经常使用的是#{},一般解说是因为这种方式可以防止SQL注入，简单的说#{}这种方式SQL语句是经过预编译的，它是把#{}中间的参数转义成字符串，举个例子：
 
+传入'test' or 1=1
+
+**${}**
+
+select * from student where student_name = ${name} 
+
+而使用${}在动态解析时候，会传入参数字符串，这时候会出现sql注入问题
+
+select * from student where student_name = ` 'test' or 1=1 `
+
+**#{}**
+
 select * from student where student_name = #{name} 
 
-预编译后,会动态解析成一个参数标记符?
+预编译后,会动态解析成一个参数标记符? 这样传入的参数就是只会作为一个简单的字符（其中的引号会作为转义字符，从而避免了参数也作为条件的一部分）
 
-select * from student where student_name = ?
-
-而使用${}在动态解析时候，会传入参数字符串
-
-select * from student where student_name = 'lyrics'
+select * from student where student_name = ` '\\'test\\' or 1=1'
 
 
 

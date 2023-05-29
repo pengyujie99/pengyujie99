@@ -13,15 +13,16 @@ tags:
 
 > Maven  JDK 
 
-<b>Maven</b>
+
+
+### Mave安装配置
 
 >本地仓库设置(新建一个repo的文件夹作为本地仓库)
 >D:\Maven\apache-maven-3.6.3\repo
 
 ~~~
-环境变量配置
-M2_HOME:     maven目录下的bin目录
-MAVEN_HOME:     maven目录
+环境变量配置 
+MAVEN_HOME:     maven目录  例如：D:\maven\apache-maven-3.8.1
 path:	%MAVEN_HOME%\bin
 ~~~
 
@@ -30,7 +31,7 @@ maven的国内阿里云镜像设置
 D:\Maven\apache-maven-3.6.3\conf\settings 进行编辑添加
 <br>
 
-```java
+```xml
 <mirror>
 	<id>alimaven</id>
 	<name>aliyun maven</name>
@@ -41,12 +42,138 @@ D:\Maven\apache-maven-3.6.3\conf\settings 进行编辑添加
 
 <br>在idea中进行配置
 <br>在Settings 中的maven进行配置
-<img src="../../../../../img/notes/maven1.png" >
+
+<img src="../../../../../img/notes/maven/maven1.png" >
+
+
+
 <br>想在进行其他project时不需要进行配置（更改idea打开新项目默认配置），需要在Settings for New Project配置
-<img src="../../../../../img/notes/maven2.png" >
+<img src="../../../../../img/notes/maven/maven2.png" >
 
 
 
 
 
-<img src="../../../../../img/notes/3.png" >
+<img src="../../../../../img/notes/maven/3.png" >
+
+
+
+
+
+### 设置远程仓库的两种配置方式
+
+
+
+#### 方式一
+
+**（此方式适合于个人使用，即只涉及到中央仓库和个人的私服，当不涉及其它仓库时，此方式设置最为简洁，若涉及到其它仓库则只能使用第二种方式）**
+
+此种方式配置两个mirror镜像，第一个配置默认的central中央仓库的代理镜像，第二个配置一个私有仓库，将所有中央仓库里没有的jar包都放这里，同时将mirrorOf的值改为*，也就是上面测试一的配置情形。此时不用再其它任何地方设置远程仓库，即使设置了也没用，原因上面已经给出了。
+
+
+
+~~~xml
+<mirrors>
+    <!-- 配置多个mirror，当mirrorOf的值相同时，当且仅当上一个远程仓库连接失败才会访问下一个远程仓库，
+             连接成功，即使没有获取想要的jar包，也不会访问下一个远程仓库
+          -->
+    <mirror>
+      <id>aliyun-maven-mirror</id>
+      <mirrorOf>central</mirrorOf>
+      <name>aliyun Maven</name>
+      <url>https://maven.aliyun.com/repository/public</url>
+    </mirror>
+    
+    
+    <!-- 个人私服，包含个人上传的一些jar包，当从上面镜像仓库获取不到时从此仓库获取
+             注意：此处mirrorOf的值不能与上面相同，上面为central，则此处一般为*
+                mirrors一般这样配置两个就好，若还有其它镜像库，最好在下面的profiles中配置
+         -->
+    <mirror>
+        <id>nexus-maven-mirror</id>
+        <mirrorOf>*</mirrorOf>
+        <name>private maven</name>
+        <url>http://localhost:8081/repository/maven-public/</url>
+    </mirror>
+</mirrors>
+
+~~~
+
+
+
+
+
+#### 方式二
+
+**（推荐使用）**
+
+只设置一个中央仓库的代理镜像，其它仓库通过settings文件的profile或pom文件引入。
+
+mirror仅仅配置central的代理镜像，其它仓库通过settings文件的profile或pom文件来配置。
+
+这种配置就比较灵活，不想第一种，直接配死了，而这种可以通过profile将新仓库地址加进去，然后通过activeProfile灵活激活使用，可扩展性好。
+
+
+
+~~~xml
+<mirrors>
+    <mirror>
+      <id>aliyun-maven-mirror</id>
+      <mirrorOf>central</mirrorOf>
+      <name>aliyun Maven</name>
+      <url>https://maven.aliyun.com/repository/public</url>
+    </mirror>                      
+</mirrors> 
+
+<profiles>
+   <profile>
+       <id>maven-aliyun</id>
+       <repositories>
+           <repository>
+               <id>aliyun-profile</id>
+               <name>aliyun maven</name>
+               <url>https://maven.aliyun.com/repository/public</url>
+               <releases>
+                   <enabled>true</enabled>
+                   <updatePolicy>daily</updatePolicy>
+                   <checksumPolicy>warn</checksumPolicy>
+               </releases>
+               <snapshots>
+                   <enabled>false</enabled>
+                   <updatePolicy>always</updatePolicy>
+               </snapshots>
+           </repository>
+       </repositories>
+   </profile>
+   
+   <!-- 配置私服Maven -->
+   <profile>
+       <id>maven-nexus</id>
+       <repositories>
+           <repository>
+               <id>maven-releases</id>
+               <name>releases</name>
+               <url>http://localhost:8081/repository/maven-releases/</url>
+               <releases><enabled>true</enabled></releases>
+               <snapshots><enabled>true</enabled></snapshots>
+           </repository>
+           <repository>
+               <id>maven-snapshots</id>
+               <name>snapshots</name>
+               <url>http://localhost:8081/repository/maven-snapshots/</url>
+               <releases><enabled>true</enabled></releases>
+               <snapshots><enabled>true</enabled></snapshots>
+           </repository>
+       </repositories>
+   </profile>
+</profiles>
+
+<!-- 手动**profile -->
+<activeProfiles>
+   <!--<activeProfile>jdk-1.8</activeProfile>-->
+   <activeProfile>maven-aliyun</activeProfile>
+   <activeProfile>maven-nexus</activeProfile>
+</activeProfiles>     
+
+~~~
+
