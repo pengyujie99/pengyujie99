@@ -5,6 +5,7 @@ subtitle:   "Blog项目的笔记心得"
 date:       2021-07-19 12:00:00
 author:     "Pengyujie"
 header-img: "img/post-bg-rwd.jpg"
+hidden: true
 tags:
     - Java
     - SpringBoot
@@ -28,7 +29,7 @@ tags:
 
 在ThreadLocal中是kv保存的，k是弱引用，v是强引用。当内存不足时，弱引用被回收，强引用还在，这时候由于k没了，v就会被永远存在
 
-![ThreadLocal](2021-07-19-mszluBlog.assets/1-16817281789301.jpg)
+
 
 ```java
 package com.pengyujie.blogapi.utils;
